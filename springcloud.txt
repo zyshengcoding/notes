@@ -1,0 +1,135 @@
+﻿http://www.atguigu.com/download.shtml  ： mybatis讲解
+
+dubbo：基于rpc远程通信调用
+
+springcloud：基于HTTP的RESTful API 
+
+==========springcloud入门概述===========
+springcloud（微服务架构的集合体）=（落体技术）springboot（做microservice）+apigetway+注册中心+熔断 etc
+
+springboot依赖springcloud，springcloud依赖springboot
+
+springboot专注于快速，方便的开发单个微服务个体，springcloud关注与全局的服务治理框架
+
+	 	 Dubbo       springcloud
+服务注册	zookeeper	Eureka
+
+服务调用方式	RPC		REST api
+
+服务监控	dubbo-monitor  springboot admin
+
+断路器		不完善		springcloud Netflix Hystrix
+
+....
+	创建maven父项目，packaging选择pom，说明是父工程，后面聚合子工程
+	
+	该工程主要是定义pom文件，将后续各个子模块公用的jar包等统一提出出来，类似抽象父类
+
+
+
+
+
+===========================
+@restcontroller用于controller的类上面相当于@controller+@responsebody
+
+@requestMapping(value="/login",method=RequestMethod.GET) 访问路径以及访问的的形式（可以为post，get等）
+
+@Requestbody用于controller层传入对象参数
+
+
+
+@PathVariable用于controller层传入id等基本数据或则包装数据以及string参数
+
+springboot与mybatis整合
+1.@mapper用于将接口扫描到容器中，不论是否是注解版还是xml配置版本都需要这个注解
+
+2.如果不想加注解，则需要通过配置文件注入，将其交给容器管理
+
+
+@configuration    //注解用于类上面  --->相当于以前spring的applicatio.xml
+
+consumer-80
+
+restTemplate（url，requestmap请求参数，responseBean.classhttp响应转换被转换成的对象类型）
+
+=================	Eurake	==================
+
+设计时遵循AP原则，是Netflix子模块
+
+
+Eureka采用C-S设计架构
+
+Eureka（上海政府） service-provider（IBM公司） service-consume（IBM员工）
+
+IBM入驻上海---》首先找到上海政府----》然后才能有人进入IBM工作
+
+构建7001Eurake server（服务端）---- 将8001注册进入7001（客户端）
+
+Eurake引入：
+
+1.在pom文件加入坐标
+
+2.主程序里面标注新组建技术的相关注解标签@EnableEurekaServer
+
+Eureka的自我保护：（在一定时间内（默认为90秒）没收到某个微服务实例的心跳，eurekaserver将会注销该实例）
+
+某一个微服务不可以用来了，eureka不会立即清理，依旧会对该微服务的信息进行保存，当eurekaServer收到的心跳
+
+重新恢复到阈值以上时，该EurekaServer节点就会自动退出自我保护模式
+
+通过自我保护达到AP（可用，分区容错）   （C（（强，弱，因果，最终）一致性）AP）
+
+	
+===========对外暴露服务===========
+@EnaleDiscoveryClient----加在主启动类
+
+@Autowired----加载controller层
+private DiscoveryClient client
+接口暴露的方法
+
+
+CP/AP(分布式必须保证P，即分区容错性)A：可用性  C：一致性
+
+Zookeeper保证CP：leader选举咋30s~120s，这期间zk集群不可用，保证不了可用性
+
+Eureka保证AP：每个节点平等
+
+
+----------Ribbon/Feign负载均衡（加入新技术1.maven加依赖2.主启动类加@EnableXXXXXX）--------
+
+Ribbon:基于Netflix Ribbon 实现的一套客户端，负载均衡的工具
+
+
+@EnableEurekaClient 加载在主启动类
+
+Ribbon:其中算法（实现IRule接口定义字节的算法）
+
+1.轮询
+2.随机
+3.retryRule：某个服务挂掉了，一定时间内多次访问挂掉服务以后，自动忽视掉队挂掉服务的访问
+。。。
+七种算法
+
+定制ribbon算法：
+@RibbonClient（name=“serverprovider的名字” ,configuration=AA.class）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

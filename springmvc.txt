@@ -1,0 +1,77 @@
+﻿1.抽象（1.抽象方法不能被private修饰，因为抽象方法需要被积累继承去重写该方法2.不能有实现体）
+
+2.父类或则接口为，有同一个变量不通的值，则子类不知道调用那个变量（a extends b implements c-----         -b中有int i = 10；----c中有int i =30）
+
+super.x表示调用父类   如果是接口则用  接口.变量
+
+
+
+@Service---继承---》@Component
+
+
+controller 三种实现方式：
+
+1. implements Controller接口 2 继承AbstractController
+
+	实现handlerequest方法
+
+3.注解 @Controller  @requestMapping（"/aaa"）请求
+
+开启组件扫描  <context  component-scan......>
+
+-------------handler就是controller------------------------
+
+servlet--最关键的方法-->service
+
+-----------------------dodispatch方法解析--------------------------
+
+--handlerMapping
+
+processRequest = this.checkMultipart
+
+checkMultipart---文件上传的方法----检查是否为二进制
+
+getHandler方法--->迭代取得handlerMapping-------核心方法  ---二种映射器
+
+HandlerExecutionChain----为包装类---->  里面是handler对象与拦截器数组
+
+
+--getHandlerAdapter
+
+三种控制器不同，所以有三种适配器
+httprequestHandlerAdapter
+SimleControllerHandlerApater-----实现controller接口的匹配，继承absractController
+RequestMappingHandlerAdapter------实现注解的方式
+
+不通适配器对应不通的控制器
+
+applypreHandler---handler处理前有一个方法---对拦截器的处理
+
+
+---mv=ha.handler(返回ModelAndView)
+
+public ModelAndView Handler-----simpleControllerHandlerAdapter（前进三次以后到达这个类的这个方法）
+
+
+
+
+======================
+
+ protected void doService---->this.doDispatch(request, response);
+
+this.checkMultipart(request)文件上传方法
+
+ mappedHandler = this.getHandler(processedRequest);-->去拿handler
+
+
+protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception
+
+返回HandlerExecutionChain --->执行链---》封装了拦截器和handler
+
+
+
+
+
+
+
+

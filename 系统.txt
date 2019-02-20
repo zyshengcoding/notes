@@ -1,0 +1,250 @@
+﻿Google Dapper
+
+CAT：基于java开发的应用监控平台
+
+访问增加--->吞吐量需要增加
+
+负载均衡-->网关-->吧不通的任务给集群中不同的服务器---
+
+-->集群--（一个任务由拆分成多个小任务---
+
+--->（每个小节点由可以做集群），一起完成）--
+
+- >转为分布式
+
+
+负载均衡服务器（F5--硬负载  nginx---软负载）---吧请求路由到不同的节点
+
+
+分布式：吧一个机器（即服务器）的这个任务--->分给多台不同的机器去完成这个任务
+
+PRC（远程方式）--->dubbo，webservice，hession（协议）--->cxf（可用来开发webservice，通过协议发布接口）
+
+远程调用方式--需要什么协议---协议可以通过什么框架来发布
+
+网关：可做认证等事情
+
+zookeeper：（分布式协调服务） dubbo服务A，dubbo服务B，dubboC，--
+
+----存在竞争（用zookeeper来保证有序性）--->访问共享资源
+
+
+========================微服务，分布式，springcloud，====================================================
+
+RMI是RPC的一种实现
+
+多协议支持---zookeeper---->记录服务的ip，端口，以及服务的协议（相当于服务的清单）
+
+
+负载均衡策越：hash策略，轮训策越，随机策越
+
+策越计算方式： 1.客户端策略 Ribbon
+	       2.服务端记录所有节点信息，负责计算：反向代理---> nginx
+
+
+============并发编程在分布式中的使用情况======================
+
+join中调用了wait方式，让主线程阻塞
+
+thread.cpp c++文件里面有一个 lock.notifyall方法唤醒线程
+
+进程结束后，类（class）被消失
+
+
+
+
+===
+centos7,执行完安装命令： yum install docker
+
+执行启动命令： systemctl   start docker  ,报下面错误：
+
+systemctl status docker.server---查看状态报错
+
+Error starting daemon: SELinux is not supported with the overlay2 graph driver on this kernel. Either boot into a newer kernel or disable selinux in docker (--selinux-enabled=false)
+
+重新编辑docker配置文件：
+vi /etc/sysconfig/docker
+
+# /etc/sysconfig/docker
+
+# Modify these options if you want to change the way the docker daemon runs
+
+OPTIONS='--selinux-enabled=false  --log-driver=journald --signature-verification=false'
+if [ -z "${DOCKER_CERT_PATH}" ]; then
+    DOCKER_CERT_PATH=/etc/docker
+fi
+
+:wq 
+
+
+
+===========zookeeper===类似文件目录结构的数据结构
+
+三个节点访问同一个共享资源（利用zookeeper来协调）
+
+节点访问---->zookeeper---->访问共享资源
+
+有序节点（） 持久化节点（在磁盘）  临时节点（与session绑定）
+
+zookeeper做集群：可以保证其可靠性，万一其中一个挂掉，其他注册节点可以起作用
+
+事物请求：增加，删除，修改
+非事物请求：查询
+
+中心节点来处理事物请求：1.利于数据同步的问题，将处理完的数据同步到其他节点
+
+zab协议：1.数据的同步 2.leader的选举
+
+节点抢占   同级目录是唯一的   临时节点下面不能有子节点
+
+watcher--->客户端监控某一个节点的变化---节点变化会通知客户端---
+--->客服端会收到节点的信息与状态
+
+获取监听有三种方式：get ，exists， getchildren
+
+get /mic（节点名） true  开启节点监控  修改节点以后，会收到通知（只触发一次）
+
+
+zookeeper应用：分布式锁（节点抢占）
+
+RPC---协议规范----框架webservice，dubbo----实现cxf等
+
+服务注册
+
+
+====dubbo===
+
+负载均衡与集群配对存在，负载利用算法来对请求进行分发
+
+
+=================分布式事务=============
+
+1.什么是事务，数据产生变化都会涉及到事务
+
+原子-->不可以分割单元，一致，持久，隔离
+
+
+
+分库（数据库）---->带来了数据的一致性问题
+
+C：一致性   A：可用性（节点是可用的）  p:分区容错（）
+
+保证CP(银行)/AP( 电商)
+
+基于XA协议接口实现数据库的回滚或则提交（双向的）（XA是规范）
+
+JTA：java提供的分布式事务接口规范
+
+
+
+
+===================缓存===============================
+缓存：能唯一能解决高并发下的问题
+
+缓存穿透。缓存击穿-----》查询数据库1~2秒延迟，来不及跟新缓存，导致其他线程都等待执行从数据库查询
+
+
+
+
+===========搜索引擎Elasticsearch==============
+
+
+
+
+
+ 1.用一条SQL语句查出所有分数在60以下学生姓名及课程清单。  
+SELECT a.name,b.course
+FROM student a,course b
+WHERE a.id = b.student_id 
+AND b.course>60
+2.用一条SQL语句查出每一个学生的课程总数和课程成绩总分。  
+SELECT a.name,SUM(b.score),COUNT(*) total
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY b.student_id
+
+
+
+
+
+ 3.用一条SQL语句查出所有课程平均分在80分以上的学生姓名。  
+SELECT * FROM 
+(SELECT a.name,a.id,SUM(b.score),SUM(b.score)/COUNT(*) avge
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY a.id) table2
+WHERE table2.avge>80
+
+4.用一条SQL语句查出课程考试及格率（达到60分的学生数/总学生数）在70%以上的课程清单
+
+SELECT * FROM(
+SELECT a.name,a.id,SUM(b.score)/COUNT(*) avge,b.course
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY b.course) tab
+WHERE tab.avge>70
+
+mysql怎么实现分布式锁
+
+
+在mysql中建一个表，这个表主键唯一。
+一个系统去处理业务时就往数据库表中添加数据。
+两个系统的业务ID是一致的，业务ID又是唯一主键，
+所以当一个系统添加数据时，另一个系统是无法往表中添加数据的。
+插入数据成功的系统就可以操作业务逻辑，
+插入失败的系统就不能操作执行业务逻辑了。这就实现了数据库锁。
+--------------------- 
+
+
+redis实现
+
+zookeeper实现
+
+
+
+========================dubbo=============
+
+SOAP是一种协议规范，基于xml的
+
+RPC是一种远程调用协议（用户模块调用订单模块）
+
+dubbo是实现rpc协议的一个框架
+
+Web Service = SOAP + HTTP + WSDL
+
+
+=============dubbo==========
+
+
+RPC和MQ区别：RPC远程调用，MQ异步通信
+
+1.invoke（远程通信）：socket网络编程，http协议，netty
+
+dubbo/spring cloud源码  用高性能的netty（应用层）进行网络通信
+
+2.register   通过curator将服务写到zk上面--->zk上面形成节点
+用父节点key存储服务名称，用子节点key存储url地址（因为一个服务对应多个实现类）
+
+
+provider：1.用netty方式启动一个端口监听  
+
+	   2.接口有不同的实现类
+
+	/com.ibm.cn.ZhanInter
+	  /com.ibm.cn.ZhanInter/127.0.0.1:8081
+	  /com.ibm.cn.ZhanInter/127.0.0.1:8082
+
+
+	provider：一定是   Inter inter = new Inter（）；
+
+	Consumer： Inter inter = 远程调用（netty发起一个远程调用请求）
+			使用动态代理--->实现远程调用--->让consumer无感知
+
+
+RPC核心：传输过程
+
+	序列化与反序列化（socket是二进制的载体）
+
+
+
+

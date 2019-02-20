@@ -1,0 +1,556 @@
+﻿springboot与web开发
+
+对静态资源的映射规则
+
+WebMvcAutoConfiguration--->springmvc的相关配置
+
+
+处理静态资源的方法：
+@Override
+		public void addResourceHandlers(ResourceHandlerRegistry registry) {
+			if (!this.resourceProperties.isAddMappings()) {
+				logger.debug("Default resource handling disabled");
+				return;
+			}
+			Integer cachePeriod = this.resourceProperties.getCachePeriod();
+			if (!registry.hasMappingForPattern("/webjars/**")) {
+				customizeResourceHandlerRegistration(registry
+						.addResourceHandler("/webjars/**")
+						.addResourceLocations("classpath:/META-INF/resources/webjars/")
+						.setCachePeriod(cachePeriod));
+			}
+			String staticPathPattern = this.mvcProperties.getStaticPathPattern();
+			if (!registry.hasMappingForPattern(staticPathPattern)) {
+				customizeResourceHandlerRegistration(
+						registry.addResourceHandler(staticPathPattern)
+								.addResourceLocations(
+										this.resourceProperties.getStaticLocations())
+								.setCachePeriod(cachePeriod));
+			}
+		}
+
+
+
+
+
+webjars以jar包的形式引入资源
+
+WebMvcAutoConfiguration这个类下面
+
+   this.customizeResourceHandlerRegistration(registry.addResourceHandler(new String[]{"/webjars/**"}).addResourceLocations(new String[]{"classpath:/META-INF/resources/webjars/"}).setCachePeriod(cachePeriod));
+          
+
+所有localhoat：8080//webjars/**的请求 都去classpath:/META-INF/resources/webjars/ 这下面去找资源
+
+@ConfigurationProperties(prefix = "spring.resources", ignoreUnknownFields = false)
+public class ResourceProperties implements ResourceLoaderAware, InitializingBean {
+
+设置和资源有关的参数
+
+
+
+添加了资源的访问路径
+String staticPathPattern = this.mvcProperties.getStaticPathPattern();
+			if (!registry.hasMappingForPattern(staticPathPattern)) {
+				customizeResourceHandlerRegistration(
+						registry.addResourceHandler(staticPathPattern)
+对/**的资源去这里面寻找
+绝对路径：硬盘的位置
+ /  代表的是 src 这个根目录，也就是跟路径--也就是箱单路径，党对于src这个目录来说
+
+registry.addResourceHandler(staticPathPattern)---------->表示请求资源路径
+	.addResourceLocations -------------------->（根据请求资源的路径）去这里面去找资源（这方面里面描述了对于/**的请求，可以在哪里获取到资源即 "classpath:/META-INF/resources/", "classpath:/resources/",
+			"classpath:/static/", "classpath:/public/" }; 这里面）
+(this.resourceProperties.getStaticLocations())  ---->getStaticLocations表示被谁映射
+
+
+<Context path="" docBase="/m" debug="0" reloadable="true"/>
+</Host>
+在tomcat servel.xml Host标签中加上Context标签。
+path是访问路径，如 localhost:8080
+docBase是webapps目录下的项目目录
+
+
+
+=========================================================
+
+thymeleafproperties：配置了thymeleaf的渲染规则   以及路径
+)
+public class ThymeleafProperties {
+    private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
+    private static final MimeType DEFAULT_CONTENT_TYPE = MimeType.valueOf("text/html");
+    public static final String DEFAULT_PREFIX = "classpath:/templates/";
+    public static final String DEFAULT_SUFFIX = ".html";
+
+数据库的配置参考：
+public clas DataSourceProperties
+		implements BeanClassLoaderAware, EnvironmentAware, InitializingBean {
+
+
+org.springframework.boot.autoconfigure.jdbc
+
+druid-----》startviewservlet
+
+写一个返回servletRegisterbean的方法来注册servlet
+
+写一个返回filterRegisterbean的方法来注册filter
+
+
+
+
+
+
+
+
+
+
+
+============https://hub.docker.com/  镜像库
+systemctl start docker  启动docker
+
+docker -v  查看docker版本号
+
+systemctl enable docker  开机启动docker
+
+docker search mysql/redis  搜索docker仓库时候有mysql和redis的镜像
+
+docker pull mysql（：5.5 下载指定版本的镜像） 下载镜像
+
+docker images  查看镜像
+
+docker rmi +镜像id  删除镜像
+
+docker rm +容器名  删除容器
+
+拉取（下载）镜像以后，启动容器 docker run --name （自定义名字） -d 镜像名：标签（版本号5.5）
+
+停止运行中的容器 docker stop +容器别名/或则容器id
+
+docker ps -a  查看运行与非运行状态的容器
+
+
+tomcat端口映射  docker run -d -p 8888:8080 tomcat
+
+docker logs + 容器id   查看容器的日志
+
+一个tomcat镜像可以启动多个容器
+
+docker run -p 3306:3306 --name mysql01 -e MYAQL_ROOT_PASSWORD=123456 -d mysql
+
+指定字符编码为utf-8： docker run -p 3306:3306 --name mysql02 -e MYAQL_ROOT_PASSWORD=123456 -d mysql --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+
+
+docker run -p 3306:3306 --name mysql01 -e MYSQL_ROOT_PASSWORD=passwordm -d mysql:5.5.60 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+Integer的好处：比int来说可以多一个null值
+
+Integer 的默认值是null
+int 的默认值 是 0
+
+例如 一个人 的成绩, 
+如果用 int  来保存,没有赋值的 情况下     那 他的成绩 就是 0分
+如果用 Integer 来保存,  没有赋值的情况 就是 null,  表示没有 没有 输入 成绩.
+这样你该明白了吧. 
+
+=================整合mybatis=======@RestController注解相当于@ResponseBody ＋ @Controller合在一起的作用
+查询 id=#{id}
+
+
+自动配置：mybatisAutoConfiguration
+
+configurationCustomizers定制规则
+
+@MapperScan(value = "springbootmysql.demo.mapper")//给指定的报名下的接口自动加上mapper注解
+
+JPA：springdata--->简化数据库访问
+
+repository   Jparepository《第一个参数写实体类名，第二个写主键类型如Integer》这个类（具有基本的分页排序功能，也有crud功能） 
+
+写一个接口继承 Jparepository
+
+yml中配置
+
+	jpa
+	   hibernate
+		ddl-auto：更新或则创建表
+	   show-sql：显示sql 	
+
+
+springboot启动配置原理==========================================
+
+	1.创建springapplication对象
+
+private void initialize(Object[] sources) {
+		if (sources != null && sources.length > 0) {
+			this.sources.addAll(Arrays.asList(sources));//如果配置文件存在，保存在sources里面
+		}
+		this.webEnvironment = deduceWebEnvironment();  //判断当前应用是否为web应用
+		setInitializers((Collection) getSpringFactoriesInstances(
+				ApplicationContextInitializer.class));
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		this.mainApplicationClass = deduceMainApplicationClass();
+
+
+FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+
+	-->Enumeration<URL> urls = (classLoader != null ? classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
+	
+          --->Set<String> names = new LinkedHashSet<String>(
+				SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+
+	   --->private <T> Collection<? extends T> getSpringFactoriesInstances(Class<T> type) {
+		return getSpringFactoriesInstances(type, new Class<?>[] {});
+	}
+
+		-->setInitializers((Collection) getSpringFactoriesInstances(
+
+寻找所有的META-INF/spring.factories下面的ApplicationContextInitializer用setInitializers保存起来
+
+	Initializers里面保存了六个对象
+
+
+setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+
+同样的在META-INF/spring.factories下面ApplicationListener保存起来
+
+	setListeners里面保存了十个对象
+
+
+this.mainApplicationClass = deduceMainApplicationClass();
+
+决定哪一个mainApplicationClass是一个主程序   该方面里面通过main方法来得到主程序
+
+if ("main".equals(stackTraceElement.getMethodName())) {
+
+		2.运行流程
+
+
+{
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();					//停止监听	
+		ConfigurableApplicationContext context = null;      //设置IOC容器为空
+		FailureAnalyzers analyzers = null;
+		configureHeadlessProperty();      //awt相关
+
+		//获取	SpringApplicationRunListeners     	getRunListeners这个方法里面定义从META-INF/spring.factories下面来获取SpringApplicationRunListeners
+
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+
+
+		listeners.starting();    //开始start方法的回调，------starting()这个方法里面对SpringApplicationRunListeners 的start方法进行了回调  SpringApplicationRunListeners 有五个方法，五个回调机制
+
+
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(
+					args);
+
+			//准备并并且配置环境，回调prepareEnvironment--->环境准备完成
+			ConfigurableEnvironment environment = prepareEnvironment(listeners,
+					applicationArguments);
+
+
+
+			Banner printedBanner = printBanner(environment);   打印控制台图标
+
+			
+			创建applicationcontext(j决定创建web还是普通ioc)    return (ConfigurableApplicationContext) BeanUtils.instantiate(contextClass);//BeanUtils利用反射来创建
+			context = createApplicationContext();
+
+				
+			做异常分析报告
+			analyzers = new FailureAnalyzers(context);
+
+				// 准备环境  回调之前创建的ApplicationContextInitializer的Initializer方法
+					
+					 回调之前创建的(ApplicationListener.class));的InitializerListener方法
+
+
+				//prepareContext  最后一步 回调  SpringApplicationRunListeners 的 listeners.contextLoaded(context)方法
+			prepareContext(context, environment, listeners, applicationArguments,
+					printedBanner);
+
+					
+					//初始化环境  ioc容器的初始化  加载所有组件
+			refreshContext(context);
+
+				//从ioc容器获取所有的ApplicationRunner（先回调）与CommandLineRunner进行回调
+			afterRefresh(context, applicationArguments);
+
+				
+				//所有的SpringApplicationRunListeners 调用finished方法
+			listeners.finished(context, null);
+
+
+			stopWatch.stop();
+			if (this.logStartupInfo) {
+				new StartupInfoLogger(this.mainApplicationClass)
+						.logStarted(getApplicationLog(), stopWatch);
+			}
+			return context;
+		}
+		catch (Throwable ex) {
+			handleRunFailure(context, listeners, analyzers, ex);
+			throw new IllegalStateException(ex);
+		}
+	}
+
+
+-------------------------整个应用启动完成    完成启动的ioc容器
+
+
+
+
+
+
+
+
+==================================springboot与缓存====
+
+cache：正在操作缓存---可用redis等实现  利用组件可用对缓存中的数据进行增删改查
+
+cacheManager：管理缓存组件
+
+@cacheable 添加缓存---用于查询
+
+@cacheEvict 清空缓存---删除操作
+
+1.开启基于注解的缓存  2.标注缓存注解即可
+
+缓存的工作原理与步骤：----------concurrentMapCacheManager--将数据库保存在concurrentMapCache这个map集合里面
+
+CacheAutoConfiguration---自动配置类
+	@Import(CacheConfigurationImportSelector.class)
+		public String[] selectImports(AnnotationMetadata importingClassMetadata) {--导入缓存需要的组件
+
+		import了11条数据--组件
+
+		默认：SimpleCacheConfiguration生效
+		SimpleCacheConfiguration注册了ConcurrentMapCacheManager这个东西
+
+方法运行之前先查询缓存，没有缓存执行目标方法，将目标方法执行的结果，放进缓存中
+
+@Cacheable注解中的组建：
+
+	value/cacheNames用来指定缓存的名称
+
+	key：缓存使用的数据，可用spel来指定 key="#root.methodName+'['+#id+']'"		
+
+	keyGenerator:通过写配置文件来指定key的生成策略
+
+	keyGenerator = “mykey” 来指定key的生成策略是通过mykey这个类指定的
+	
+	condition：符合条件才缓存
+
+@CachePut：调用方法，并且更新数据
+
+	先调用方法-->将目标方法结果放入缓存
+
+
+http://localhost:8080/empup?id=1&lastName=han&gender=1
+
+
+@CacheEvict：缓存清除
+
+allEntries：删除缓存中所有数据
+
+@caching是前三个注解的集合
+
+concurrentMapCacheManager--将数据库保存在concurrentMapCache这个map集合里面，
+开发中将缓存存在redis等缓存中间件中
+
+docker中国镜像加速指令：、ubuntu:16.04（redis：版本号）
+
+启动redis  docker run -d（后台方式启动） -p（暴露端口） 6379（虚拟机）:6379（容器） 虚拟机端口映射到容器的端口
+
+--name myredis  registry.docker-cn.com/library/redis
+
+
+
+===========================redis
+
+RedisAutoConfiguration
+
+	加入组件："redisTemplate"-操作对象，StringRedisTemplate--针对字符串
+		@Bean
+		@ConditionalOnMissingBean(name = "redisTemplate")
+		public RedisTemplate<Object, Object> redisTemplate(
+		
+		@Bean
+
+		@ConditionalOnMissingBean(StringRedisTemplate.class)
+		public StringRedisTemplate stringRedisTemplate(
+不转json，默认用序列化以后的结构来保存数据
+
+默认的序列化器defaultSerializer = new JdkSerializationRedisSerializer为jdk自带的
+
+
+
+
+
+================缓存组件来crud
+
+引入redis之后
+
+@ConditionalOnBean(RedisTemplate.class)---加入redis组件
+@ConditionalOnMissingBean(CacheManager.class)---判断容器中没有cachemanager---判断成功
+
+---》然后放置缓存管理器RedisCacheManager 创建rediscache缓存来操作数据
+	@Bean
+	public RedisCacheManager cacheManager
+
+默认用序列化来保存数据----如何保存为json
+
+RedisCacheManager 操作redis传入了RedisTemplate----》是redisautoconfiguration创建的----》用的jdk序列化器（不是使用json格式的）
+
+public RedisCacheManager cacheManager(RedisTemplate<Object, Object> redisTemplate) {
+
+自定义cachemanager
+
+
+
+
+==============消息中间件=====
+
+1.异步
+
+2.解耦   订单系统成功---》发送消息到队列，库存系统订阅了 消息，---》收到消息以后，开始库存系统的数量减少操作
+
+3.流量削峰--秒杀 10000请求，只有1000进入队列，其他显示秒杀失败，进入队列的，进行秒杀业务逻辑处理
+
+消息代理：消息中间件的服务器-----》服务器将消息发送到目的地
+
+RabbitMQ：
+
+message--消息头与消息体(不可见)组成
+
+publisher--消息生产者
+
+Exchange--交换器（决定消息发往哪里）：用来接收生产者发送的消息并且将这些消息路由给服务器中队列
+有四种类型--------
+direct，发消息的路由件与绑定消息的路由件一致才会发送消息到指定的队列里面
+fanout，不管路由件，下面所有队列每人都去发一份  广播模式  发送消息速度最快
+topic，
+headers
+
+Queue：消息队列，保存xiaoxi
+
+消息路由机制：消息-----发送到-->broker（消息代理，也就是服务器）--->交换器（根据消息携带过来的路由件）
+
+-根据绑定规格-->确定交给哪一个队列
+
+5672---客服端通信的端口
+
+15672---管理界面的访问web界面的端口
+
+
+交换器创建：
+名字
+类型
+持久化：（重启下次还在）
+
+消息队列添加：
+名字
+持久化：durable --表示持久化
+是否自动删除：no
+
+进行绑定：
+队列名
+路由件名字  topic用xx.#来进行绑定  direct与fanout可以与队列名一样，也可以不一样
+
+
+#匹配0或则多个单词，*匹配一个单词
+
+创建queues的时候需要指定路由件--即Routing key  方便发布消息的关联起来
+
+Exchange发送消息的时候，需要指定路由件--即Routing Key--这个key与上面创建
+
+queues的不是同一个路由件，但是需要彼此来匹配
+
+相当于创建的时候需要创建一个规则key，来绑定exchange与queues，
+使用的时候，传入消息与key，此时的key用来与创建时候key进行匹配
+
+
+如：创建队列的时候指定key为 #.new   发布消息的时候指定的key为 abc.new
+
+二者匹配起来进行消息发送到指定的队列
+
+-------------boot+mq----
+RabbitAutoConfiguration
+
+1.配置了连接工厂CachingConnectionFactory---获取连接信息（用户名，主机，setVirtualHost等）
+
+客服端amqp的端口，默认是5672
+
+2.public RabbitTemplate rabbitTemplate  ---  rabbitTemplate  给mq发送与接收消息
+
+3.public AmqpAdmin amqpAdmin系统管理组件
+
+convertAndSend  发送消息
+
+receiveAndConvert  消费消息
+
+消息队列的监听:在mian方法种添加 @EnableRabbit  --开启基于注解的RabbitMQ
+@RabbitListener（queues=“监听消息队列名字，为数组”）
+@EnableRabbit  + @RabbitListener监听消息队列的内容
+
+
+===========boot与检索ElasticSearch============
+
+
+-e限制elasticsearch限制启动大小
+
+docker run -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -d -p 9200:9200 -p 9300:9300 --name myes  73e6fdf8bd4f
+
+-e ES_JAVA_OPTS="-Xms256（初始堆内存大小） -Xmx256（最大使用的堆内存）" 
+-d -p 9200:9200 （web通信的端口）
+-p 9300:9300(分布式情况下，elasticsearch每个节点用的是9300端口)
+
+-----boot与ES交互方式  1.Jest 2.springdata ElasticSearch---
+
+ElasticSearchTemplate来操作ElasticSearch
+
+
+-------springboot与任务------
+异步任务：
+@EnableAsync//开启异步注解
+@Async//方法加注解，告诉spring是异步方法
+
+
+定时任务：
+@EnableScheduling
+@Scheduled定时任务 cron表达式  六位 每位用空格分割 秒 分 时 日 月 周几到周几
+@Scheduled(cron = "0 * * * * * MON-FRI")周一到周五每分钟整秒启动
+，表示枚举  0,1,2,3  0秒1秒2秒3秒启动   0-3  同样效果 0/3 每三秒启动一次
+
+邮件任务： 引入 spring-boot-starter-mail
+
+MailSenderAutoConfiguration--->MailProperties邮件的配置
+
+
+============boot与安全============
+
+
+
+=============boot与分布式======
+
+
+Container--->dubbo的服务容器----在启动的时候--
+
+->负责启动，加载，运行provider（服务提供者）------在启动时候---->
+
+会将自己提供的服务信息注册到注册中心-----Register
+
+服务消费者启动的时候在注册中心订阅消息-----register
+
+服务消费者(consumer)根据获得的生产者(provider)信息
+
+去找到提供者的位置去调用(invoke)其服务
+
+服务发布1.yml三个配置
+
+	2.service类加上@service（dubbo的service）+@component注解
+
+
+在userservice服务消费者里面，放置一个全类名一样的ticketservice接口
+

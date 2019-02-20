@@ -1,0 +1,121 @@
+﻿http://9.197.250.95:8080/ServletDemo/some
+
+启动的顺序为listener->Filter->servlet.
+
+简单记为：理(Listener)发(Filter)师(servlet).
+
+执行的顺序不会因为三个标签在配置文件中的先后顺序而改变。
+
+
+
+//@WebServlet注解
+
+@WebServlet(value={"/some","/someone"}，
+	name=“ servletname的名字”
+	initParams={@WebInitParam（name=“。。。”，value=“。。。。。”），（name=“。。。”，value=“。。。。。”）}   ----初始化参数（可以有多个）
+)
+
+只有一个路径的时候，value属性可以省略不写
+
+response.getwritter -----------通过返回对象.append可以往页面加入值
+
+response.setcontentType 可以设置返回值类型 UTF-8
+
+
+//webFilter("/*")  过滤
+
+
+
+
+
+//@weblistener  监听    继承servletContextListener
+
+
+-----------------------------------------------------------------
+ 1。
+注解的servlet访问路径（即@webServelt(value=“”)）不能与web.xml的访问路径相同
+
+如果不同，相当于有二个访问路径 
+
+ 2.
+对于filter   会当做二个不同的filter来执行
+
+ 3.
+对于listener 相当于一个listener
+
+
+ 4.
+metadata-complete
+在<web-app/>中的metadata-complete的值若为true，表示注解失效
+默认为false，表示同时都有作用
+
+
+==========================
+servlet异步（单列多线程）
+
+1.servlet会创建线程池，（线程池为内存的一块区域，有上限）
+
+
+2.-----（1）接受用户请求
+
+  -------（2）根据用户请求调用service层代码
+
+  -------（3）将计算结果响应给客户端
+	=============**********=========
+
+@webservice（，asynSupported=true） asynSupport=true表示对异步的支持
+
+
+startAsync（）方法----获取异步上下文对象  request.startAsync(),
+
+通过异步对象AsyncContext.complete()或则AsyncContext.setTimeout
+
+或则AsyncContext.dispatch("xxx.jsp")--转发包含xxx.jsp的内容----可以结束异步操作
+
+
+
+
+   通过异步对象AsyncContext.complete()或则AsyncContext.setTimeout：
+表示马上销毁response和request等，马上进行输出，子线程继续运行，主线程输出
+
+
+
+
+==========动态注册=======
+
+1.写一个servelt类
+
+2.注册listener  @weblistener（与下面的类相对应）
+
+3.写一个类实现serveltcontextlistener，重写contextinitialized方法
+
+	通过方法传入的参数 ac = sec.getserlvetcontext()得到servelt
+
+	通过 xx srd = ac.addservelt  指定servelt名与classname（就是第1步中的类的全路径名）
+
+	通过srd.addmapping（“/some”）增加访问的路径url-pattern
+
+用过serveltContextListener来监听应用的启动情况
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

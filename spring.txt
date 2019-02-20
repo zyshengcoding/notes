@@ -1,0 +1,177 @@
+﻿classpathxmlapplicationcontext
+自动装配：
+
+java类：
+
+Daoimpl  dao；声明
+
+setDao方法
+
+xml配置：
+
+<beans..........   default-autowire="byType---看xml与java文件中是否有匹配的类型/byName---xml中的id与set方法的名字一样--set方法之后名字"></>     
+
+<bean id  name="如果不指定与id的名字一样" service类>
+
+<bean  dao类>
+
+@import 将类注入容器中
+@ComponentScan 该注解等价于XML中<context:component-scan base-package=""/>
+
+
+---------
+java类-----类上面加上@component（"指定bean的名字"）  不需要配置beans了
+@autowired
+@Qualifier(value="index")    --指定特定的bean的注入  index=bean的id
+
+配置文件：
+<context:component-scan base-package="..."> --自动扫描注解
+
+@configuration---声明配置类
+@componentscan（“com”）---扫描包内容
+	-----这二个可以实现0配置
+@importresources（“classpath：spring.xml”）在java代码中通过注解引入配置文件
+	----三个可以实现混合配置
+
+
+-------
+jar-->application.xml--><beans>
+-----
+@configuration
+		--------添加配置类
+@component（com.ibm.spring）--扫描包
+
+接口实现类添加@Component注解
+-----
+spring初始化的三种方式：
+
+AnnotationConfigApplicationContext---初始化spring环境--注解版
+
+ClasspathxmlApplicationContext---初始化spring环境---xml版
+
+web.xml通过添加监听来初始化spring环境
+
+问题:（Aspectj-与springaop的关系）
+	AOP是什么（springAop实现aop的一种手段）（日志，权限，数据库事务）：
+
+
+browse（发送http请求）---->controler（接受参数，封装实体，调用service，返回试图）-
+
+-->service--- >dao(数据库操作)
+-------------------======================================----------------
+g
+PointCut  切点（连接点的集合）-----execution （）  
+
+Join point 连接点（作用在方法---即指向目标对象） --------@pointcut（方法前面）
+
+Aspect  切面----上面切点，连接点的集合------相当于一个<bean>------@Component+@Aspect来实现
+
+@Before（“将切点的方法写在这里”）------前置通知
+
+	通知加入切点的过程叫织入   ---- 在初始化spring的时候已经织入了
+
+----------==========================
+实现aop----采用jdk的动态代理----->面向接口采用的方式
+
+	CGLIB---代理
+
+在
+
+	利用Aspectj语句来实现（注解/ xml）
+	AOPsupport  
+
+
+
+
+
+怎么在调试的时候看堆栈？？？？？？？？？？？？？？？？
+
+spring中的asm是什么？？？？？？？？？？？？？？
+
+
+
+====================spring源码====================================
+
+@Target（---表示作用域---可以为类（@controller），
+
+可以为方法（@requestmapping），可以为参数（@requestparam））
+
+@Autowired---字段注解   private Dao daoimpl
+
+init方法里面：
+
+1.读取配置文件	doloadConfig（）  config.getContextLocation
+
+2.扫描配置文件  doscanner（）
+
+replace（".class",""）吧.class替换为空
+
+3.初始化相关联的类，并保存在初始化容器中
+
+clazz.getSimpleName()---得到类名
+
+A方法---类名首字母小写
+
+clazz.isAnnotationPresent(Controller.class)---->判断类是否加了注解
+
+A（）{
+char 【】 chars = simpleName.toCharArray(); --->字符串转字符串数组
+
+chars（0）+=32
+
+string.valueof(chars)
+
+}
+
+
+
+4.完成依赖注入 doAutowired
+
+=========springmvc=====
+
+5.初始化HandlerMaping    initHandlerMapping()
+
+6.dodispath
+
+
+
+=====================事务===============
+
+放在service上面
+@Transaction
+如果当前线程存在事务，则执行该事务，如果不存在，则新建一个事务
+
+AbstractPlatformTransactionManager-----事务源码
+
+mysql默认隔离级别：RR 可重复读-----与spring的默认隔离级别一样
+
+事务失败在日志里面会打印：先执行事务--->然后dorollback
+
+	1.testA在执行之前执行testB
+
+	2.testB业务可有可无，如果B有异常，不能对A的代码有影响
+
+只有代理对象直接调用的方法才会被代理
+
+代理类实际不存在，调用过程中的中间产物
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

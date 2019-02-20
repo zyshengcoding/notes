@@ -1,0 +1,412 @@
+﻿
+-----------------一张页面可以可以从多种数据存储平台来提供
+
+1.商品基本信息（基本不变信息 如书名，作者等）：存mysql 
+
+2.商品的留言，详情等  存MongDB---即文档数据库
+
+3.商品图片   分布式存储系统
+
+4.商品的关键字（搜索引擎里面需要搜索的） Isearch   
+
+5.商品高频词汇---即热搜词汇     Redis
+
+6.商品积分等    
+
+--------------针对多数据源----统一数据平台服务层UDSL---即不需要连不同的数据源，直接连这个统一数据平台
+
+Nosql数据模型简介
+
+BSON  类似json
+
+	这个json串里面可以包含订单，和订单详情
+
+相当于一个json串的查询，只需要找到key（即custom），可以拿出一串value（即订单和订单详情），然后进行解析
+传统关系型数据库，多表查询需要join来进行关联
+
+
+四大分类：1.KV键值2.文档性数据库3.列存储数据库4.图关系数据库(表现：微博的朋友推荐)
+
+
+分布式数据库中的CAP原理CAP+BASE=============
+A：原子性 C：一致性 I：独立性 D：持久性
+
+CAP
+
+C:强一致性 A：可用性 P：分区容错性（nosql必须占用）
+
+一个分布式系统最多满足cap的二个特性（如CA，CP或AP）
+
+AP：大多数网站架构的选择  保证网站不瘫痪===高可用+分区容错性
+
+CP：redis ，MongoDB
+
+BASE:基本可用，软状态，最终一致
+
+
+======================
+ cp redis.config
+ daemonize no  ---> 改为yes
+
+ps -ef | grep redis
+
+启动redis  service    redis-server /自己的路径/redis.conf
+
+
+redis-cli -p 6379
+
+
+redis-benchmark ： 做性能测试
+
+redis是单进程处理客户端请求，对读写等时间的响应是通过linux操作系统的包装来完成的
+
+默认装了16个库存（在redis.conf里面有写到）   select 7--7表示角标 （换到第六个库，库角标从0开始）
+
+hashset的底层为hashmap
+
+  ===
+keys *  显示所有的key
+
+flushdb   清除当前库的书库    flushall  清除16个库    6379位redis端口
+
+select *（选择几号库）
+
+=========redis的五大数据类型======
+
+string，hash，list，set，zset
+
+--
+move k2 2 （吧k2移动到二号库）
+
+ttl k1  表示数据能存在多久（-1表示永不过期，-2已经过期，移除内存系统）
+
+expire k2 10  （k2能存在10秒）
+==========================
+
+Redis Incr 命令将 key 中储存的数字值增一。 incr k 20（原有k的value值加20）
+
+decrby 20（原有k的value值减少20）
+
+
+----list《单key多value》--------------可以重复-----------------
+lpush--左边进，查询反着出来（rpush--与lpush相反） mylist 1 2 3 4 5   增加数据
+
+lrange mylist 0 -1     查看所有数据        5 4 3 2 1
+
+lpop（rpop相反） mylist     显示 5     因为5在栈顶 先出来（出栈以后数据不存在--执行查询 显示 1 2 3 4）
+
+lindex mylist 2 （显示第三个数据）
+
+llen mylist   (显示长度）
+
+lrem mylist 2 3 （从mylist里面删除2个3）
+
+ltrim mylist 3 5（截取第四到第六个数）
+
+rpoplpush list01 list02  （rpop将list01栈地的数据拿出来 lpush将拿出来的数据压入list02的栈顶）
+
+lset mylist 1 12（将下标为1的值设置为12）
+
+linsert mylist before（after） 12 xxx （在数值12之前（之后）插入xxx）
+
+	性能总结：是一个字符串链表，左右都可以插入
+		
+		   值全部移除，对应的键也就消失了
+
+		   如果键存在，会被覆盖
+
+		   	
+
+------------set-----无序无重复（用来去重复过滤）-----------
+
+sadd set01 1 2 3   （增加数据）
+
+smembers set01 （查看数据）
+
+sismember set01 1
+
+scard set01 （获取个数）
+
+srem  set01 3（删除）
+
+srandmember set 3 （从数据里面随机出来三个------挖财，什么抽红包，从奖金池获取）
+
+spop set01 （随机出栈）
+
+smove set01 set02 5 （吧set01 里面的5 放到set02 里面）
+
+del set01  （删除）
+
+Sdiff  set01  set02 （只在01 不在02 里面的数据）   sinter（取相同的）/sunion set01 set02（并集）
+
+
+--------------hash----------------
+
+hset user id 11 （插入数据）
+
+hget user id（取数据）
+
+hmset customer id 12 name lisi age 20（插入数据）
+
+
+hmget customer id name age 得到 12 lisi 20 （取数据）
+
+hgetasll customer  （一次性取得所有k-v即   id=12，name=lisi，age=20）
+
+hdel user  name （删除user的name属性）
+
+hlen user （查看user还有那些属性）
+
+hexists user name (查看是否有那么属性)
+
+hkeys/hvals 显示所有的key与value
+
+hincrby/hincrbyfloat user age 2（原有的age数值+2）/ score 0.5（原有的score属性加0.5）
+
+hsetnx user email 123@   （往user加入一对新的K,V）
+
+-----------------zsert----------------------
+
+zadd zset01 60 v1 70 v2  v3 80（为zset01添加二对值）
+
+zrange zset01 0 -1   显示 v1 v2 。。
+
+zrange zset01 0 -1 withscores  显示 v1 60  v2 70 。。
+
+zrangebyscore zset01 60 80 （===60 （80  表示不包含80===） 显示 v1，v2。。。  在这之外的不会显示
+
+zrangebyscore zset01 60 80 limit 2 2 （分页---按2个数据进行分页，显示第2页的二个数据）
+
+zrem zset01 v5  （删除v5）
+
+zcard set01  （===60  80 统计60到80分的===）（统计多少数据）
+
+
+
+====================================配置文件==redis.conf====================
+
+includes       可以配置其他的redis的配置文件
+
+tcp-backlog---》连接队列 ---高并发需要一个高的backlog值来避免慢客户端连接问题   
+
+timeout 0 表示一直连接，处于不关闭状态
+
+config get requirepass   获取redis登录的密码
+
+config set requirepass  “123456”   设置密码
+
+
+缓存清楚策略：lru（算法） 最近最少使用   ttl（算法）有限时间内  noevcation（算法）永不过期
+
+
+=========================redis持久化=============
+
+什么是持久化：rdb(相当于就是对指定时间内对keys*操作的保存，保存在dump.rdb里面)/aof  
+
+rdb：指定时间内将内存中的数据集快照写入磁盘，也就是进行快照SNAPSHOTTING
+
+保存在dump.rdb 文件	
+
+save指令：让dunm. rdb自动备份
+----------
+aof:将redis执行的写指令记录下来（不涉及度操作）
+
+（在redis.conf中 ）append only mode
+
+appendonly no 将其修改为开启状态（即no改为yes）
+
+如果appendonly文件损坏
+--
+aof与rdb能够并存，先找aof
+
+
+==========redis 事务============
+
+一次性批处理多个redis命令
+
+一个队列中，一次性，顺序性，排他性的执行一系列命令
+
+MULTI命令开始----收到ok（不表示能立即并且成功的执行事务）---标志事务开始
+
+EXEC----执行
+
+DISCARD--放弃
+
+WATCH key。。。  监控一个或则多个key 
+
+----正常执行
+bootredis:3>set k2 v2
+"QUEUED"
+
+bootredis:3>set k3 v3
+"QUEUED"
+
+bootredis:3>get k3
+"QUEUED"
+
+bootredis:3>set k4 v4
+"QUEUED"
+
+bootredis:3>EXEC
+ 1)  "OK"
+ 2)  "OK"
+ 3)  "v3"
+ 4)  "OK"
+
+-----放弃事务
+
+-----全体连坐（只要有一个失败，值执行语句有问题如 setget k1 ，因为根本没有setget这个操作，《根本就没办法执行》，所以导致其他的操作失败
+
+，整个事务全失败）
+
+----冤头债主（如果是 incr k1-----《此语句是可执行的》----此时value的值为aa--- aa+1不存在这种数据，此时只有单个操作失败，其他的执行语句不影响）----这里说明了redis部分支持事务
+
+
+-----watch监控
+
+表锁：并发性极差，但一致性极好，一次执行一条语句
+
+乐观锁---在每条记录的后面加一个version版本号的字段
+
+二个操作同时读取到版本号为1的记录----二个操作都进行修改操作---其中一个操作先commit，此时版本号变为了2，
+
+另一个操作再次提交此时的版本号变成了2，而自己的版本号为1----立即抛出异常--然后读取版本号为2的，在进行提交和修改
+
+---------先监控--在开启multi，然后exec----
+watch K 对k的value进行监控
+
+
+bootredis:3>set balance 100
+"OK"
+
+bootredis:3>set debt 0
+"OK"
+
+bootredis:3>watch balance
+"OK"
+
+bootredis:3>MULIT
+"ERR unknown command `MULIT`, with args beginning with: "
+
+bootredis:3>MULTI
+"OK"
+
+bootredis:3>decrby balance 20
+"QUEUED"
+
+bootredis:3>incr debt 20
+"ERR wrong number of arguments for 'incr' command"
+
+bootredis:3>incrby debt 20
+"QUEUED"
+
+bootredis:3>EXEC
+"EXECABORT Transaction discarded because of previous errors."
+--------------------------------------------------------------------------演示了全体连坐--由于前面的错误 导致整个事务失败--单监视依然存在
+
+bootredis:3>MULTI--------------------------如果有其他线程在开启事务之前修改了balance的值，则后面的事务操作将会失败，balance的值变为其他线程修改的新值
+"OK"								--------------只有先unwatch以后，在执行一次watch然后进行事务，才会让事务成功
+
+bootredis:3>decrby balance 20
+"QUEUED"
+
+bootredis:3>incrby debt 20
+"QUEUED"
+
+bootredis:3>EXEC------执行完exec之后，监控被清除
+ 1)  "80"---------------------------------保证了二笔金额的变动在同一笔事务当中
+ 2)  "20"
+bootredis:3>
+---------------------------------------------------------------演示了监视----开启事务---执行整个过程成功的过程
+
+
+
+
+
+============发布订阅机制=========
+
+进程间的通信模式
+
+SUBSCRIBE c1 c2 c3    订阅了三个消息
+
+PUBLISH  c2 hello   对C2发布发布了一跳消息
+
+
+=============主从复制（读写分离，容灾恢复）复制的缺点：master到slave会有延迟（由于网络等原因）========
+
+Master以写为主，Slave已读为主
+
+1.配从不配主
+
+redis.conf文件的修改(如有一个端口为6380的从机)
+	daemonize  yes
+	1.修改 pidfile   /var/run/redis6380.pid
+	2.port （修改端口） 6380
+	3.logfile   "6380.log"
+	4.dbfilename dump6380.rdb
+
+
+ Redis Ping 命令使用客户端向 Redis 服务器发送一个 PING ，如果服务器运作正常的话，会返回一个 PONG 。
+
+通常用于测试与服务器的连接是否仍然生效，或者用于测量延迟值。redis-cli ping
+
+info:replication  显示信息
+
+	role：master
+
+-----
+（1）
+set  k1 v1
+
+SLAVEOF 127.0.0.1  6380  ---->指定主机  此条指令开始：从机会把之前的k1的数据也进行备份
+
+set k2 v2
+
+（2）
+
+主从机同时执行一条指令  set k6 v6
+
+从机不可以执行写操作
+
+（3）
+
+	主机down
+
+主机： SHUTDOWN   --主机挂了  数据还存在
+
+	-----从机还是slave（联系状态为down）等待状态
+
+主机：重启ok了  
+
+	-----从机能够识别主机（能续接上）
+
+	从机down
+
+重启以后变成了master，需要从新连上主机（除非写在配置文件）
+
+（4）
+
+上一个slave可以是下一个slave的master
+
+slaveof no one----->让从机成为主机 -----从机下面的从机需要从新指定主机
+
+（5）哨兵模式：sentinel（从机中选出一个主机，如果以前主机回来以后变成slave从机）
+主机挂了-->以投票的方式在从机中选举主机
+
+新建sentinel配置文件--->sentinel monitor 主机名（主机取） 127.1.1.1:6380 1（表示从机投票数大于1就成为新的主机）
+
+启动配置文件
+
+主机重新回来以后变成slave从机   
+
+
+
+SETBIT与GETBIT
+
+# SETBIT key offset value
+SET video:1201 200 1
+# 上面的命令就是设置ID为200的用户，已经看过了ID为1201的视频。
+
+# GETBIT key offset
+GETBIT video:1201 200
+# 上面的命令就是查询ID为200的用户是否观看了ID为1201的视频 
