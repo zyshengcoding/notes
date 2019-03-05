@@ -1,11 +1,68 @@
-﻿2818 
+﻿数据库
+
+读没有提交：a事物执行了插入操作，还没commit、然后b事物能够读取到没有提交的事物—-出现脏读
+
+读提交：（解决了脏读）a事物没有提交，b只能读取到旧的数据、a提交以后，b在进行读取才会读到新的数据—-b二次读到不同的数据、出现不可以重复读（侧重点在update和delete）
+其他数据库的默认隔离级别
+
+可重复读：（解决了不可重复读起）a、b事物隔离，无论a是否提交了事物b都只能读到以前的数据
+比如：a事物查询、b事物插入、a进行查询发现了不了插入的数据—出现幻读（侧重点在insert）
+mysql的默认隔离级别
+
+串行化：a、b事物顺序去执行
+
+读用读锁，写用写锁，读锁与写锁互斥可以避免一系列问题，但是会降低数据库的并发能力
+
+
+锁
+
+1.共享锁（读锁）、排它锁（写锁）
+
+2.乐观锁、悲观锁
+
+乐观锁实现：为数据增加一个版本标识，为表增加一个version的字段
+
+3.
+表级锁：开销小、加锁快，粒度大。myisam（不支持hash索引），memory（支持btree、hash索引）引擎
+
+行级锁：innodb引擎（不支持hash索引）
+
+
+drop删除表，truncate删数据库，delete删除行
+
+update 表 set 字段 where条件
+
+insert  ignore-可以忽视主键重复报错 into 表（字段）values（数据）
+
+
+索引：
+	普通索引：（创建）create index index_name on table （column（length））
+       （删除）drop index index_name on  table
+
+	唯一索引：creata unique index   ....
+
+	联合索引：...on table（column a、cloumn b）
+
+
+索引二大类型：hash与btree
+
+unique key “index_name”  （“name”） using btree
+防止重复插入，索引的数据类型为btree
+
+
+MYSQL：5.0以上
+utf-8:一个汉字 = 三个字节
+gbk：一个汉字 = 二个字节
+
+
+
 
 mybatis点击commit之后，会迅速把书库从内存灌入硬盘
 
 ps -A | grep -i mysql
 kill 列出来的进程
 service mysql start
-问题解决
+我的问题就解决了
 
 密码：123456
 
