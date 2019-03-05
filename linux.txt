@@ -21,7 +21,6 @@ NAT模式：
 
 			linux特点：实操性强
 
-192.168.235.128  123456
 
 ip地址：
 XXX.XXX.XXX.1网关
@@ -91,7 +90,3 @@ chown -R tom kkk:  修改用户信息（将kkk以及自目录下用户修改为t
 
 chgrp 。。。。: 修改组信息   与上面一样
 
-
-
-
-WINSCP里面的putty是远程登录/上传和下载 是linux的的软件，从而可以操作远端的linux服务器
