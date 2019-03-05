@@ -1,3 +1,0 @@
-﻿ssh-keygen -t rsa -C "zyshenghan@outlook.com"
-密码：zhang123..
-/c/Users/YongShengZhang/.ssh/id_rsa
