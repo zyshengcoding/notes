@@ -5,7 +5,7 @@ mybatis点击commit之后，会迅速把书库从内存灌入硬盘
 ps -A | grep -i mysql
 kill 列出来的进程
 service mysql start
-我的问题就解决了
+问题解决
 
 密码：123456
 
