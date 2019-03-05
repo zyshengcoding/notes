@@ -1,9 +1,0 @@
-﻿强制使用CGLIB代理需要将 <aop:config>的 proxy-target-class属性设为true。
-
-使用注解配置Spring AOP总体分为两步，第一步是在xml文件中声明激活自动扫描组件功能，同时激活自动代理功能
-
-
-<!-- 激活组件扫描功能,在包cn.ysh.studio.spring.aop及其子包下面自动扫描通过注解配置的组件 -->
-	<context:component-scan base-package="cn.ysh.studio.spring.aop"/>
-	<!-- 激活自动代理功能 -->
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
