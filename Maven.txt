@@ -5,8 +5,8 @@
 	      <services>	
 		<server>
 			<id>project-snapshots</id>
-			<username>deployment</username>
-			<password>admin123</password>
+			<username>*****</username>
+			<password>*****</password>
 		</server>
     	      </services>	
 
@@ -22,7 +22,7 @@ mvn deploy:deploy-file
 -Durl=http://10.25.213.4:8981/nexus/content/repositories/snapshots/   --->远端的地址
 
 
-3.在增加的pom.xml中下载依赖
+3.在pom.xml中下载依赖
 		<dependency>
 			<groupId>djsw</groupId>
 			<artifactId>djsw-api</artifactId>
