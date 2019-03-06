@@ -1,0 +1,31 @@
+﻿添加jar包到私服
+
+1.maven安装的setting.xml下面进行配置
+
+	      <services>	
+		<server>
+			<id>project-snapshots</id>
+			<username>deployment</username>
+			<password>admin123</password>
+		</server>
+    	      </services>	
+
+2.输入指令
+mvn deploy:deploy-file
+ -Dmaven.test.skip=true
+ -Dfile=C:\Users\abc-sdk-1.0.0-SNAPSHOT.jar     ---->所上传的jar的路径
+-DgroupId=djsw            --->上传以后的<groupId>djsw</groupId>
+-DartifactId=djsw-api       ---->上传以后的<artifactId>djsw-api</artifactId>
+-Dversion=1.0.0-SNAPSHOT     ----->上传以后的<version>1.0.0-SNAPSHOT</version>			
+-Dpackaging=jar 
+-DrepositoryId=project-snapshots      --->为server中的id <id>project-snapshots</id>
+-Durl=http://10.25.213.4:8981/nexus/content/repositories/snapshots/   --->远端的地址
+
+
+3.在增加的pom.xml中下载依赖
+		<dependency>
+			<groupId>djsw</groupId>
+			<artifactId>djsw-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+  
