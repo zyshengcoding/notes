@@ -1,4 +1,11 @@
-﻿数据库
+﻿oracle时间段查询
+ mi.REGISTER_TIME <to_date('2019-03-13 23:59:59','yyyy-MM-dd hh24:mi:ss')  
+ and register_time>=to_date('2014-03-05 00:00:00','yyyy-MM-dd hh24:mi:ss') 
+
+
+
+
+数据库
 
 读没有提交：a事物执行了插入操作，还没commit、然后b事物能够读取到没有提交的事物—-出现脏读
 
