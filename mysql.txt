@@ -3,6 +3,14 @@
  and register_time>=to_date('2014-03-05 00:00:00','yyyy-MM-dd hh24:mi:ss') 
 
 
+DBLINK：
+　create public database link
+
+　　to_bylw connect to scott identified by tiger using 'bylw';
+
+　　其中to_bylw是你创建的dblink名字，bylw是远程数据库的实例名，scott/tiger是登录到远程数据库的用户/密码。然后在本地数据库中通过dblink访问远程数据库'bylw'中scott.tb_test表，sql语句如下所示
+
+　　select * from scott.tb_test@to_bylw;
 
 
 数据库
