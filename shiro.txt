@@ -1,0 +1,32 @@
+﻿shiro （简单灵活，脱离spring） 
+springSecurity（繁杂，不可以脱离spring）
+
+1.Authenticator:认证器，管理登陆与登出。
+2.Authorizer:授权器，赋予主体权限。
+3.Session Manager:session管理器，session管理机制。不借助任何web容器使用session
+4.Session Dao:session操作，主要增删改查。
+5.Cache Manager:缓存管理器
+6.Pluggable Realms(1 or more):shiro与数据库的连接
+7.Cryptography:数据加密
+
+请求道security manager  --->Authenticator--->Pluggable Realms(通过此来获取认证信息来对传过来的请求参数做比对)
+
+
+1.构建manager--->2.设置realm（数据库读取数据）--->3.设置通过SecurityUtiles.setManager
+
+---->通过SecurityUtiles获取主体getSubject---->获取主体提交认证数据-->通过得到的主体.login进行登录
+
+--->usernamepasswordToken来设置用户名名字 ----通过得到的主体.isAuthenticator来判断是否登录成功
+
+
+创建SecurityManager-->主体提交认证-->SecurityManager认证
+--->Authenticator认真-->Realm验证
+
+
+Shiro授权
+
+创建SecurityManager-->主体授权-->SecurityManager授权
+--->Authorizer授权-->Realm验证角色数据与权限数据
+
+Realm：iniRealm jdbcRealm
+
