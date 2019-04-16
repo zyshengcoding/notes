@@ -49,10 +49,117 @@ Frame.fromBodyFragment
 
 
 ========================RabbitMQ=======================
+配置：
+
+1.consume
+
+	======================================  基本配置 ===============
+ 	<!--配置connection-factory，指定连接rabbit server参数 -->
+	<rabbit:connection-factory id="connectionFactory"
+		username="${message}" password="${message}" host="${messag}" port="${mess}" /> 
+
+	<!-- 序列化 -->
+	<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+	<!--定义rabbit template用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate"  connection-factory="connectionFactory" 
+	    exchange="exchangeQueue" message-converter="jsonMessageConverter"/>
+		
+	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	==========================================定义queue以及交换机器==========================	
+
+	<!--定义queue -->
+	<rabbit:queue name="FOR_JDSW_MEMBER_REGISTERINFO" durable="true" auto-delete="false" exclusive="false" />
+
+	<rabbit:queue name="FOR_JDSW_CREATE_CARDINFO" durable="true" auto-delete="false" exclusive="false" />
+
+	<!-- 定义direct exchange，绑定queueTest -->
+	<rabbit:direct-exchange name="exchangeQueue" durable="true" auto-delete="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="FOR_JDSW_MEMBER_REGISTERINFO" key="FOR_JDSW_MEMBER_REGISTERINFO_KEY"></rabbit:binding>
+			<rabbit:binding queue="FOR_JDSW_CREATE_CARDINFO" key="FOR_JDSW_CREATE_CARDINFO_KEY"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	=================================================定义消费类，对消息进行消费===================================	
+
+	<!-- 监听积分发送的订单队列 -->
+	<bean id="jdswCreateCardinfo" class="com.controller.ConsumeForMemberRegisteredInfo"/>
+	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" acknowledge="manual">
+		<rabbit:listener queues="FOR_JDSW_MEMBER_REGISTERINFO" ref="jdswCreateCardinfo"/>
+	</rabbit:listener-container>
 
 
+	<bean id="jdswRegisteredinfo" class="com.controller.ConsumeForCreateCardInfo"/>
+	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" acknowledge="manual">
+		<rabbit:listener queues="FOR_JDSW_CREATE_CARDINFO" ref="jdswRegisteredinfo"/>
+	</rabbit:listener-container>
+
+	消费类：	
+	 1.ConsumeForMemberRegisteredInfo implements ChannelAwareMessageListener 	  实现接口
+	 
+	2.重写onMessage(Message message, Channel channel)                    方法
+
+	 3. try {
+            logger.info("接受MQ队列为：FOR_JDSW_MEMBER_REGISTERINFO");
+            String synJsonStr = (String) convert.fromMessage(message);
+            MemberCreateCardDTO memberCreateCardDTO = JSONObject.parseObject(synJsonStr, MemberCreateCardDTO.class);
+            logger.info("接受MQ数据为：" + memberCreateCardDTO);
+    
+            memberInfoCallDjswController.memberRegisteredInfo(memberRegisteredInfoToDjswDTO);              -------------调用方法
+        } catch (Exception e) {
+            logger.info("exception {}"+e);
+        } finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);          -----必须写
+        }
 
 
+2.product
+
+	================= 定义基本信息  ========
+
+		<!--配置connection-factory，指定连接rabbit server参数 -->
+	<rabbit:connection-factory id="connectionFactory"
+		username="${message.rmq.username}" password="${message.rmq.password}" host="${message.rmq.host}" port="${message.rmq.port}" /> 
+
+	<!-- 序列化 -->
+	<bean id="jsonMessageConverter"  class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+	<!--定义rabbit template用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate"  connection-factory="connectionFactory" 
+	    exchange="exchangeQueue" message-converter="jsonMessageConverter"/>
+		
+	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin connection-factory="connectionFactory" />
+
+		=============   配置q等消息   ==================
+	
+	<!--定义queue -->
+	<rabbit:queue name="queueForPoints" durable="true" auto-delete="false" exclusive="false" />
+	
+	
+
+	<!-- 定义direct exchange，绑定queueTest -->
+	<rabbit:direct-exchange name="exchangeQueue" durable="true" auto-delete="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueForPoints" key="queueForPtsKey"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+		============消息产生类
+
+	private AmqpTemplate amqpTemplate;
+
+	public void sendMessage(String key, Object message) {                ===========key为queueForPtsKey
+		logger.info("to send message:{}", message);
+		// 发送对象，默认序列化。如果序列化，必须convertAnd发送
+		try{
+			amqpTemplate.convertAndSend(key, message);
+		}catch(Exception e){
+			logger.error("MessageProducer 消息产生,提交到队列中去:{}"+e.getMessage());
+		}
+		
+	}
 
 
 
