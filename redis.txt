@@ -1,4 +1,42 @@
-﻿
+﻿1.代码实现：  引入jedis的jar包     不设置超时时间，默认永不超时
+
+	1.1 redisUtil.expire(para.getReqUUID(), 24*3600);   -----设置超时时间
+
+	1.2 	public class RedisUtil
+		
+		通过shardedJedisPool.getResource得到shardedJedis，操作shardedJedis 里面的方法 
+
+		ShardedJedis shardedJedis = null;
+		try {
+			shardedJedis = shardedJedisPool.getResource();
+			return shardedJedis.expire(key, seconds);
+		} catch (Exception ex) {
+			logger.error("EXPIRE error[key=" + key + " seconds=" + seconds + "]" + ex.getMessage(),
+					ex);
+			returnBrokenResource(shardedJedis);
+		} finally {
+			returnResource(shardedJedis);
+		}
+
+	1.3  shardedJedis有很多方法操作redis，getShard(key);是关键
+		
+		public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, Closeable
+
+		 public Long expire(String key, int seconds) {
+   			 Jedis j = getShard(key);
+   			 return j.expire(key, seconds);
+ 		 }
+
+	1.4 getShard(key);的解析
+
+		public class Sharded<R, S extends ShardInfo<R>> 
+
+		  public R getShard(String key) {
+   		 return resources.get(getShardInfo(key));
+  		}
+
+		
+
 -----------------一张页面可以可以从多种数据存储平台来提供
 
 1.商品基本信息（基本不变信息 如书名，作者等）：存mysql 
