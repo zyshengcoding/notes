@@ -1,4 +1,17 @@
-﻿oracle时间段查询
+﻿内连接与联合查询的区别
+from a join b 与 from a, b 产生的临时表结果集 都是执行笛卡尔积即(select * from a cross join b )两表的行乘积数。
+
+on :与取得结果集同步进行数据刷选及过滤。
+
+where : 获得结果集之后，才进行数据刷选及过滤。
+
+执行顺序：on在上游，where在中游，having在下游。
+
+
+
+
+
+oracle时间段查询
  mi.REGISTER_TIME <to_date('2019-03-13 23:59:59','yyyy-MM-dd hh24:mi:ss')  
  and register_time>=to_date('2014-03-05 00:00:00','yyyy-MM-dd hh24:mi:ss') 
 
