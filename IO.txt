@@ -1,0 +1,7 @@
+﻿File - fileInputStream - BufferInputStream     输入流用法--输出类类似
+
+File file = new file("C:/a.txt")
+
+FileInputStream  finput = new FileInputStream(file)
+
+BufferInputStream bf = new BufferInputStream(finput);
