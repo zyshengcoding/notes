@@ -1,0 +1,35 @@
+﻿MQ集群：
+docker run -d --hostname rabbit1 --name myrabbit1 -p 15675:15672 -p 5675:5672 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+docker run -d --hostname rabbit2 --name myrabbit2 -p 5676:5672 --link myrabbit1:rabbit1 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+docker run -d --hostname rabbit3 --name myrabbit3 -p 5677:5672 --link myrabbit1:rabbit1 --link myrabbit2:rabbit2 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+
+docker exec -it myrabbit1 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl start_app
+exit
+
+docker exec -it myrabbit2 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl join_cluster --ram rabbit@rabbit1
+rabbitmqctl start_app
+exit
+
+docker exec -it myrabbit3 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl join_cluster --ram rabbit@rabbit1
+rabbitmqctl start_app
+exit
+
+mq设置用户以及权限
+
+  rabbitmqctl add_user  zhang  123
+
+   rabbitmqctl set_user_tags zhang  administrator 
+
+ rabbitmqctl  set_permissions -p /vhost1  zhang '.*' '.*' '.*'  

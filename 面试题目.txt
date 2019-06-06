@@ -1,0 +1,32 @@
+﻿​业务；
+​spring的特性，spring core部分，优势在哪里；
+​集群环境的话，多线程进行修改。数据层使用悲观锁；
+​MongoDB中NoSQL的特性和优势；
+​
+​
+​linked list的数据结构；
+​thread local；
+​cached thread pool的缓存队列，里面的参数；
+​MySQL的主键和唯一主键的数据结构；
+​thread pool的参数的各种意义；
+​thread pool的执行流程；
+​tolist<object> au = new arraylist <string> ；
+​泛型参数；基本泛型；
+​MQ中间键的理解；
+​
+​WebService的端口
+​
+​spring的核心类有哪些
+​筛选出重复数据的sql
+​Oracle/MySQL的分页模式
+​bean的实例化
+​spring注解的主要方法
+​git的主要分支
+​http的传输方式
+​sleep和wait的区别
+​JSON和XML的解析方式
+​
+​redies去做一个技术防止并发，对用户锁定，设置时间，后台乐观锁
+​前端短信登录，防止注入 接口里面做个注解，用了注解就拦截逻辑
+​
+​接口是如何防止暴露的。
