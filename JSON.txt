@@ -4,3 +4,12 @@
         if (StringUtils.isEmpty(str))
             return;
          List<VoucherOrigin> voucherOriginList = JSONArray.parseArray(str, VoucherOrigin.class);
+
+2.List集合转str
+
+
+    public void sendNormalData(List<PtNormalDiscountDto> listPnDto) throws Exception{
+      
+        String str = JSON.toJSONString(listPnDto);
+     
+    }
