@@ -2,3 +2,141 @@
 explain plan for  select * from pt_category 
 commit;
 select * from table(dbms_xplan.display)
+
+
+
+内连接与联合查询的区别
+from a join b 与 from a, b 产生的临时表结果集 都是执行笛卡尔积即(select * from a cross join b )两表的行乘积数。
+
+on :与取得结果集同步进行数据刷选及过滤。
+
+where : 获得结果集之后，才进行数据刷选及过滤。
+
+执行顺序：on在上游，where在中游，having在下游。
+
+
+
+
+
+oracle时间段查询
+ mi.REGISTER_TIME <to_date('2019-03-13 23:59:59','yyyy-MM-dd hh24:mi:ss')  
+ and register_time>=to_date('2014-03-05 00:00:00','yyyy-MM-dd hh24:mi:ss') 
+
+
+DBLINK：
+　create public database link
+
+　　to_bylw connect to scott identified by tiger using 'bylw';
+
+　　其中to_bylw是你创建的dblink名字，bylw是远程数据库的实例名，scott/tiger是登录到远程数据库的用户/密码。然后在本地数据库中通过dblink访问远程数据库'bylw'中scott.tb_test表，sql语句如下所示
+
+　　select * from scott.tb_test@to_bylw;
+
+
+数据库
+
+读没有提交：a事物执行了插入操作，还没commit、然后b事物能够读取到没有提交的事物—-出现脏读
+
+读提交：（解决了脏读）a事物没有提交，b只能读取到旧的数据、a提交以后，b在进行读取才会读到新的数据—-b二次读到不同的数据、出现不可以重复读（侧重点在update和delete）
+其他数据库的默认隔离级别
+
+可重复读：（解决了不可重复读起）a、b事物隔离，无论a是否提交了事物b都只能读到以前的数据
+比如：a事物查询、b事物插入、a进行查询发现了不了插入的数据—出现幻读（侧重点在insert）
+mysql的默认隔离级别
+
+串行化：a、b事物顺序去执行
+
+读用读锁，写用写锁，读锁与写锁互斥可以避免一系列问题，但是会降低数据库的并发能力
+
+
+锁
+
+1.共享锁（读锁）、排它锁（写锁）
+
+2.乐观锁、悲观锁
+
+乐观锁实现：为数据增加一个版本标识，为表增加一个version的字段
+
+3.
+表级锁：开销小、加锁快，粒度大。myisam（不支持hash索引），memory（支持btree、hash索引）引擎
+
+行级锁：innodb引擎（不支持hash索引）
+
+
+drop删除表，truncate删数据库，delete删除行
+
+update 表 set 字段 where条件
+
+insert  ignore-可以忽视主键重复报错 into 表（字段）values（数据）
+
+
+索引：
+	普通索引：（创建）create index index_name on table （column（length））
+       （删除）drop index index_name on  table
+
+	唯一索引：creata unique index   ....
+
+	联合索引：...on table（column a、cloumn b）
+
+
+索引二大类型：hash与btree
+
+unique key “index_name”  （“name”） using btree
+防止重复插入，索引的数据类型为btree
+
+
+MYSQL：5.0以上
+utf-8:一个汉字 = 三个字节
+gbk：一个汉字 = 二个字节
+
+
+
+
+mybatis点击commit之后，会迅速把书库从内存灌入硬盘
+
+ps -A | grep -i mysql
+kill 列出来的进程
+service mysql start
+我的问题就解决了
+
+密码：123456
+
+explain + sql +\G; 可以显示sql详细优化内容
+
+
+ order by 从英文里理解就是行的排序方式，默认的为升序。 
+order by 后面必须列出排序的字段名，可以是多个字段名。
+group by 从英文里理解就是分组。必须有“聚合函数”来配合才能使用，
+使用时至少需要一个分组标志字段。什么是“聚合函数”?像sum()、count()、avg()等都是“聚合函数”使用gro...
+
+/var/lib/mysql    建立的数据库db01 放在这个目录下面
+
+/usr/share/mysql 配置文件目录
+
+/etc 下面有my.cnf 配置文件
+
+ 原子性表示事务执行过程中的任何失败都将导致事务所做的任何修改失效。
+
+
+一致性表示当事务执行失败时，所有被该事务影响的数据都应该恢复到事务执行前的状态。
+
+
+隔离性表示在事务执行过程中对数据的修改，在事务提交之前对其他事务不可见。
+
+
+持久性表示已提交的数据在事务执行失败时，数据的状态都应该正确。 
+
+---------------------
+ 原子性(Atomic)：事务中各项操作，要么全做要么全不做，任何一项操作的失败都会导致整个事务的失败； 
+
+
+- 一致性(Consistent)：事务结束后系统状态是一致的； 
+
+
+- 隔离性(Isolated)：并发执行的事务彼此无法看到对方的中间状态； 
+
+
+- 持久性(Durable)：事务完成后所做的改动都会被持久化，即使发生灾难性的失败。
+通过日志和同步备份可以在故障发生后重建数据。
+
+---------------------
