@@ -1,0 +1,4 @@
+﻿plsqldev：查看执行计划
+explain plan for  select * from pt_category 
+commit;
+select * from table(dbms_xplan.display)
