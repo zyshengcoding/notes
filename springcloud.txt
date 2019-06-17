@@ -112,24 +112,3 @@ Ribbon:其中算法（实现IRule接口定义字节的算法）
 
 定制ribbon算法：
 @RibbonClient（name=“serverprovider的名字” ,configuration=AA.class）
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
