@@ -2,7 +2,7 @@
 ​spring的特性，spring core部分，优势在哪里；
 ​集群环境的话，多线程进行修改。数据层使用悲观锁；
 ​MongoDB中NoSQL的特性和优势；
-​
+​redis，zk，dubbo，分布式事务
 ​
 ​linked list的数据结构；
 ​thread local；

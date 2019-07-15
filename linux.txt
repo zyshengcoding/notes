@@ -1,4 +1,9 @@
-﻿查看日志：
+﻿查找：
+find -name 'catalina.out' | xargs grep --color -A 0 -B0 'CK-SAP-MP-01'
+
+A 0（after 表示过滤之后不符合条件的之后显示多少行） -B0 （before 表示过滤之前不符合条件的之后显示多少行）
+
+查看日志：
 less 指令退出用 q
 tail 指令退出用 Ctrl+c
 

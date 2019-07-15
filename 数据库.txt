@@ -14,7 +14,7 @@ where : 获得结果集之后，才进行数据刷选及过滤。
 
 执行顺序：on在上游，where在中游，having在下游。
 
-
+select id,seq_no,rownum from kc_store_bill_goods where seq_no between 2 and 5;  相当于 <=2 seq_no <=5
 
 
 
