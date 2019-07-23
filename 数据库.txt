@@ -5,6 +5,13 @@ select * from table(dbms_xplan.display)
 
 
 
+explain plan for  select * from pt_product a where a.commodity_code like '2%';
+commit;
+select * from table(dbms_xplan.display)
+
+如果是主键尽管是%在后面也不走索引
+
+
 in：一般外面的表为大表，里面的为小表，先过滤小表，然后与大表进行匹配，数据量很大
 
 exits：一般里面的为大表，先过滤里面的大表，晒算掉大部分数据，因此再去关联外面的小表，所以快
