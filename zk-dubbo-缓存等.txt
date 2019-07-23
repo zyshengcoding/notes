@@ -1,4 +1,11 @@
-﻿Google Dapper
+﻿ZK：每个节点都可以存放数据，文件系统中只有文件节点可以存放数据而目录节点不行
+
+
+
+
+操作rabbitMq查看用户：[root@ztsit4 ~]#  rabbitmqctl list_users
+
+Google Dapper
 
 CAT：基于java开发的应用监控平台
 

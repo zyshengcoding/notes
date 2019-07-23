@@ -5,6 +5,8 @@ select * from table(dbms_xplan.display)
 
 
 
+触发器：触发器是在一个修改了指定表中的数据时执行的存储过程（触发器与存储过程非常相似，触发器也是SQL语句集，两者唯一的区别是触发器不能用EXECUTE语句调用）
+
 内连接与联合查询的区别
 from a join b 与 from a, b 产生的临时表结果集 都是执行笛卡尔积即(select * from a cross join b )两表的行乘积数。
 
