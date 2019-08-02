@@ -20,3 +20,30 @@ Integer 对象是在 IntegerCache.cache 产生，会复用已有对象，
 
 
 泛型必须为对象，即不能为基础数据类型
+
+
+7. 【强制】不要在 foreach 循环里进行元素的 remove/add 操作。
+remove 元素请使用 Iterator 方式，如果并发操作，需要对 Iterator 对象加锁。 
+public E remove(int index) {
+        rangeCheck(index);
+
+        modCount++;
+        E oldValue = elementData(index);
+
+        int numMoved = size - index - 1;
+        if (numMoved > 0)
+            System.arraycopy(elementData, index+1, elementData, index,
+                             numMoved);
+        elementData[--size] = null; // clear to let GC do its work
+
+        return oldValue;
+    }
+在集合中进行操作时，当modCount != expectedModCount时会抛出修改异常。
+通过源码可以知道，集合在增加，删除元素时都会修改modCount的值，当在集合中删除时，
+modCount+1,而expectedModCount未改变，而在集合删除完之后，迭代器指向下一个对象（即调用next()方法），
+会检测出不一致而抛出异常。
+final void checkForComodification() {
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+        }
+
