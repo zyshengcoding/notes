@@ -47,3 +47,7 @@ final void checkForComodification() {
                 throw new ConcurrentModificationException();
         }
 
+
+8：BeanUtils.copyProperties
+
+如果A中属性为false，B中的属性也为false，从Acopy到B之后B中的false变为true
