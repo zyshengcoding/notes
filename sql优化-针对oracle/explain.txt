@@ -16,3 +16,7 @@ exits：一般里面的为大表，先过滤里面的大表，晒算掉大部分
 !=,is not null,is null
 
 使用上面的条件，无论是主键还是普通索引都将无效   （<只取is null的截图>is null-1.png,is null-2.png）
+
+
+4.
+建立索引  create index index_Name on table_name(cloumn_name)
