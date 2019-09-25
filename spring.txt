@@ -1,4 +1,12 @@
-﻿BeanFactory ：
+﻿spring-core  
+Spring bean解析就在此方法
+1.org.springframework.context.support.AbstractApplicationContext#refresh
+
+
+
+
+
+BeanFactory ：
 在 Spring 中，有大量对 BeanFactory 接口的实现。
 其中，最常被使用的是 XmlBeanFactory 类。
 这个容器从一个 XML 文件中读取配置元数据，
