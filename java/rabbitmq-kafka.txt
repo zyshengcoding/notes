@@ -1,0 +1,43 @@
+﻿rabbitmq
+1.在consume中与provider中需要分别指定queue
+2.在consume中配置listener（指定消费的类），在provider中配置绑定关系
+
+consume：
+   	<rabbit:queue id="queue.test.11" name="queue.test.11"
+				  auto-declare="true" declared-by="rabbitAdmin" auto-delete="false"
+				  exclusive="false" durable="true" />
+
+
+
+	<rabbit:listener-container id="queue.test.11"
+							   error-handler="" acknowledge="auto" concurrency="3"
+							   prefetch="10" max-concurrency="5" auto-startup="true" advice-chain="adviceChain"
+							   auto-declare="true" connection-factory="rabbitConnectionFactory">
+		<rabbit:listener queues="sap.order.error" ref="recvSapInterfaceLogService" method="handSapInterfaceErrorMsg" />   -----ref代表类，method代表类中消费的方法
+	</rabbit:listener-container>
+
+provider：
+
+	 <rabbit:queue id="queue.test.11" name="queue.test.11"
+                  auto-declare="true" declared-by="rabbitAdmin" auto-delete="false"
+                  exclusive="false" durable="true" />
+
+
+<rabbit:direct-exchange id="exchange.direct"
+		auto-declare="true" name="exchange.direct" auto-delete="false"
+		durable="true" declared-by="rabbitAdmin">
+		<rabbit:bindings>
+			<rabbit:binding key="queue.test.11" queue="queue.test.11" />
+			<rabbit:binding key="queue.test.10" queue="queue.test.10" />    ---配置多个绑定关系
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+
+linux下面常用指令
+
+启动关闭程序
+./sbin/rabbitmqctl stop_app
+./sbin/rabbitmqctl start_app
+
+查看队列
+./sbin/rabbitmqctl list_queues
