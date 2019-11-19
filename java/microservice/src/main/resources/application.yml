@@ -12,8 +12,8 @@ spring:
   datasource:
     username: root
     password: 123456
-#    url: jdbc:mysql://192.168.0.150:3301/jdbc     #office
-    url: jdbc:mysql://192.168.1.9:3301/jdbc    #home
+    url: jdbc:mysql://192.168.0.125:3301/jdbc     #office
+#    url: jdbc:mysql://192.168.1.9:3301/jdbc    #home
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
