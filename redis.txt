@@ -448,3 +448,12 @@ SET video:1201 200 1
 # GETBIT key offset
 GETBIT video:1201 200
 # 上面的命令就是查询ID为200的用户是否观看了ID为1201的视频 
+
+
+============并发编程在分布式中的使用情况======================
+
+join中调用了wait方式，让主线程阻塞
+
+thread.cpp c++文件里面有一个 lock.notifyall方法唤醒线程
+
+进程结束后，类（class）被消失

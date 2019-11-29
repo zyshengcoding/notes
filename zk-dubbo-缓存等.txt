@@ -6,10 +6,6 @@
 ZK：每个节点都可以存放数据，文件系统中只有文件节点可以存放数据而目录节点不行
 
 
-
-
-操作rabbitMq查看用户：[root@ztsit4 ~]#  rabbitmqctl list_users
-
 Google Dapper
 
 CAT：基于java开发的应用监控平台
@@ -56,41 +52,9 @@ RMI是RPC的一种实现
 	       2.服务端记录所有节点信息，负责计算：反向代理---> nginx
 
 
-============并发编程在分布式中的使用情况======================
-
-join中调用了wait方式，让主线程阻塞
-
-thread.cpp c++文件里面有一个 lock.notifyall方法唤醒线程
-
-进程结束后，类（class）被消失
-
-
 
 
 ===
-centos7,执行完安装命令： yum install docker
-
-执行启动命令： systemctl   start docker  ,报下面错误：
-
-systemctl status docker.server---查看状态报错
-
-Error starting daemon: SELinux is not supported with the overlay2 graph driver on this kernel. Either boot into a newer kernel or disable selinux in docker (--selinux-enabled=false)
-
-重新编辑docker配置文件：
-vi /etc/sysconfig/docker
-
-# /etc/sysconfig/docker
-
-# Modify these options if you want to change the way the docker daemon runs
-
-OPTIONS='--selinux-enabled=false  --log-driver=journald --signature-verification=false'
-if [ -z "${DOCKER_CERT_PATH}" ]; then
-    DOCKER_CERT_PATH=/etc/docker
-fi
-
-:wq 
-
-
 
 ===========zookeeper===类似文件目录结构的数据结构
 
@@ -151,15 +115,6 @@ JTA：java提供的分布式事务接口规范
 
 
 
-
-===================缓存===============================
-缓存：能唯一能解决高并发下的问题
-
-缓存穿透。缓存击穿-----》查询数据库1~2秒延迟，来不及跟新缓存，导致其他线程都等待执行从数据库查询
-
-
-
-
 ===========搜索引擎Elasticsearch==============
 
 
@@ -208,13 +163,6 @@ mysql怎么实现分布式锁
 插入数据成功的系统就可以操作业务逻辑，
 插入失败的系统就不能操作执行业务逻辑了。这就实现了数据库锁。
 --------------------- 
-
-
-redis实现
-
-zookeeper实现
-
-
 
 ========================dubbo=============
 

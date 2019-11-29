@@ -33,3 +33,31 @@ mq设置用户以及权限
    rabbitmqctl set_user_tags zhang  administrator 
 
  rabbitmqctl  set_permissions -p /vhost1  zhang '.*' '.*' '.*'  
+
+
+操作rabbitMq查看用户：[root@ztsit4 ~]#  rabbitmqctl list_users
+
+
+centos7,执行完安装命令： yum install docker
+
+执行启动命令： systemctl   start docker  ,报下面错误：
+
+systemctl status docker.server---查看状态报错
+
+Error starting daemon: SELinux is not supported with the overlay2 graph driver on this kernel. Either boot into a newer kernel or disable selinux in docker (--selinux-enabled=false)
+
+重新编辑docker配置文件：
+vi /etc/sysconfig/docker
+
+# /etc/sysconfig/docker
+
+# Modify these options if you want to change the way the docker daemon runs
+
+OPTIONS='--selinux-enabled=false  --log-driver=journald --signature-verification=false'
+if [ -z "${DOCKER_CERT_PATH}" ]; then
+    DOCKER_CERT_PATH=/etc/docker
+fi
+
+:wq 
+
+

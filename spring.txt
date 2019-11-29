@@ -96,7 +96,7 @@ web.xml通过添加监听来初始化spring环境
 	AOP是什么（springAop实现aop的一种手段）（日志，权限，数据库事务）：
 
 
-browse（发送http请求）---->controler（接受参数，封装实体，调用service，返回试图）-
+browse（发送http请求）---->controler（接受参数，封装实体，调用service，返回视图）-
 
 -->service--- >dao(数据库操作)
 -------------------======================================----------------
