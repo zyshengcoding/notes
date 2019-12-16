@@ -1,0 +1,55 @@
+﻿数据库多条件判断
+
+1.or: <if test="(storeCode != null and storeCode != '') or 
+(productListingFlag != null and productListingFlag != '') ">
+
+2.and: <if test="(storeCode != null and storeCode != '') and 
+(productListingFlag != null and productListingFlag != '') ">
+
+
+
+mysql怎么实现分布式锁
+
+
+在mysql中建一个表，这个表主键唯一。
+一个系统去处理业务时就往数据库表中添加数据。
+两个系统的业务ID是一致的，业务ID又是唯一主键，
+所以当一个系统添加数据时，另一个系统是无法往表中添加数据的。
+插入数据成功的系统就可以操作业务逻辑，
+插入失败的系统就不能操作执行业务逻辑了。这就实现了数据库锁。
+--------------------- 
+
+
+mybatis点击commit之后，会迅速把书库从内存灌入硬盘
+
+ps -A | grep -i mysql
+kill 列出来的进程
+service mysql start
+我的问题就解决了
+
+密码：123456
+
+explain + sql +\G; 可以显示sql详细优化内容
+
+
+ order by 从英文里理解就是行的排序方式，默认的为升序。 
+order by 后面必须列出排序的字段名，可以是多个字段名。
+group by 从英文里理解就是分组。必须有“聚合函数”来配合才能使用，
+使用时至少需要一个分组标志字段。什么是“聚合函数”?像sum()、count()、avg()等都是“聚合函数”使用gro...
+
+/var/lib/mysql    建立的数据库db01 放在这个目录下面
+
+/usr/share/mysql 配置文件目录
+
+/etc 下面有my.cnf 配置文件
+
+ 原子性表示事务执行过程中的任何失败都将导致事务所做的任何修改失效。
+
+
+一致性表示当事务执行失败时，所有被该事务影响的数据都应该恢复到事务执行前的状态。
+
+
+隔离性表示在事务执行过程中对数据的修改，在事务提交之前对其他事务不可见。
+
+
+持久性表示已提交的数据在事务执行失败时，数据的状态都应该正确。 

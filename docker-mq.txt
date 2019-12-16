@@ -1,0 +1,268 @@
+﻿MQ集群：
+docker run -d --hostname rabbit1 --name myrabbit1 -p 15675:15672 -p 5675:5672 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+docker run -d --hostname rabbit2 --name myrabbit2 -p 5676:5672 --link myrabbit1:rabbit1 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+docker run -d --hostname rabbit3 --name myrabbit3 -p 5677:5672 --link myrabbit1:rabbit1 --link myrabbit2:rabbit2 -e RABBITMQ_ERLANG_COOKIE='rabbitcookie' rabbitmq:3-management
+
+
+docker exec -it myrabbit1 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl start_app
+exit
+
+docker exec -it myrabbit2 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl join_cluster --ram rabbit@rabbit1
+rabbitmqctl start_app
+exit
+
+docker exec -it myrabbit3 bash
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl join_cluster --ram rabbit@rabbit1
+rabbitmqctl start_app
+exit
+
+mq设置用户以及权限
+
+  rabbitmqctl add_user  zhang  123
+
+   rabbitmqctl set_user_tags zhang  administrator 
+
+ rabbitmqctl  set_permissions -p /vhost1  zhang '.*' '.*' '.*'  
+
+
+操作rabbitMq查看用户：[root@ztsit4 ~]#  rabbitmqctl list_users
+
+
+centos7,执行完安装命令： yum install docker
+
+执行启动命令： systemctl   start docker  ,报下面错误：
+
+systemctl status docker.server---查看状态报错
+
+Error starting daemon: SELinux is not supported with the overlay2 graph driver on this kernel. Either boot into a newer kernel or disable selinux in docker (--selinux-enabled=false)
+
+重新编辑docker配置文件：
+vi /etc/sysconfig/docker
+
+# /etc/sysconfig/docker
+
+# Modify these options if you want to change the way the docker daemon runs
+
+OPTIONS='--selinux-enabled=false  --log-driver=journald --signature-verification=false'
+if [ -z "${DOCKER_CERT_PATH}" ]; then
+    DOCKER_CERT_PATH=/etc/docker
+fi
+
+:wq 
+
+
+
+
+rabbitmq
+1.在consume中与provider中需要分别指定queue
+2.在consume中配置listener（指定消费的类），在provider中配置绑定关系
+
+consume：
+   	<rabbit:queue id="queue.test.11" name="queue.test.11"
+				  auto-declare="true" declared-by="rabbitAdmin" auto-delete="false"
+				  exclusive="false" durable="true" />
+
+
+
+	<rabbit:listener-container id="queue.test.11"
+							   error-handler="" acknowledge="auto" concurrency="3"
+							   prefetch="10" max-concurrency="5" auto-startup="true" advice-chain="adviceChain"
+							   auto-declare="true" connection-factory="rabbitConnectionFactory">
+		<rabbit:listener queues="sap.order.error" ref="recvSapInterfaceLogService" method="handSapInterfaceErrorMsg" />   -----ref代表类，method代表类中消费的方法
+	</rabbit:listener-container>
+
+provider：
+
+	 <rabbit:queue id="queue.test.11" name="queue.test.11"
+                  auto-declare="true" declared-by="rabbitAdmin" auto-delete="false"
+                  exclusive="false" durable="true" />
+
+
+<rabbit:direct-exchange id="exchange.direct"
+		auto-declare="true" name="exchange.direct" auto-delete="false"
+		durable="true" declared-by="rabbitAdmin">
+		<rabbit:bindings>
+			<rabbit:binding key="queue.test.11" queue="queue.test.11" />
+			<rabbit:binding key="queue.test.10" queue="queue.test.10" />    ---配置多个绑定关系
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+
+linux下面常用指令
+
+启动关闭程序
+./sbin/rabbitmqctl stop_app
+./sbin/rabbitmqctl start_app
+
+查看队列
+./sbin/rabbitmqctl list_queues
+
+
+
+
+=============实战 ====
+
+========================RabbitMQ=======================
+配置：
+
+1.consume
+
+	======================================  基本配置 ===============
+ 	<!--配置connection-factory，指定连接rabbit server参数 -->
+	<rabbit:connection-factory id="connectionFactory"
+		username="${message}" password="${message}" host="${messag}" port="${mess}" /> 
+
+	<!-- 序列化 -->
+	<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+	<!--定义rabbit template用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate"  connection-factory="connectionFactory" 
+	    exchange="exchangeQueue" message-converter="jsonMessageConverter"/>
+		
+	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	==========================================定义queue以及交换机器==========================	
+
+	<!--定义queue -->
+	<rabbit:queue name="FOR_JDSW_MEMBER_REGISTERINFO" durable="true" auto-delete="false" exclusive="false" />
+
+	<rabbit:queue name="FOR_JDSW_CREATE_CARDINFO" durable="true" auto-delete="false" exclusive="false" />
+
+	<!-- 定义direct exchange，绑定queueTest -->
+	<rabbit:direct-exchange name="exchangeQueue" durable="true" auto-delete="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="FOR_JDSW_MEMBER_REGISTERINFO" key="FOR_JDSW_MEMBER_REGISTERINFO_KEY"></rabbit:binding>
+			<rabbit:binding queue="FOR_JDSW_CREATE_CARDINFO" key="FOR_JDSW_CREATE_CARDINFO_KEY"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	=================================================定义消费类，对消息进行消费===================================	
+
+	<!-- 监听积分发送的订单队列 -->
+	<bean id="jdswCreateCardinfo" class="com.controller.ConsumeForMemberRegisteredInfo"/>
+	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" acknowledge="manual">
+		<rabbit:listener queues="FOR_JDSW_MEMBER_REGISTERINFO" ref="jdswCreateCardinfo"/>
+	</rabbit:listener-container>
+
+
+	<bean id="jdswRegisteredinfo" class="com.controller.ConsumeForCreateCardInfo"/>
+	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" acknowledge="manual">
+		<rabbit:listener queues="FOR_JDSW_CREATE_CARDINFO" ref="jdswRegisteredinfo"/>
+	</rabbit:listener-container>
+
+	消费类：	
+	 1.ConsumeForMemberRegisteredInfo implements ChannelAwareMessageListener 	  实现接口
+	 
+	2.重写onMessage(Message message, Channel channel)                    方法
+
+	 3. try {
+            logger.info("接受MQ队列为：FOR_JDSW_MEMBER_REGISTERINFO");
+            String synJsonStr = (String) convert.fromMessage(message);
+            MemberCreateCardDTO memberCreateCardDTO = JSONObject.parseObject(synJsonStr, MemberCreateCardDTO.class);
+            logger.info("接受MQ数据为：" + memberCreateCardDTO);
+    
+            memberInfoCallDjswController.memberRegisteredInfo(memberRegisteredInfoToDjswDTO);              -------------调用方法
+        } catch (Exception e) {
+            logger.info("exception {}"+e);
+        } finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);          -----必须写
+        }
+
+
+2.product
+
+	================= 定义基本信息  ========
+
+		<!--配置connection-factory，指定连接rabbit server参数 -->
+	<rabbit:connection-factory id="connectionFactory"
+		username="${message.rmq.username}" password="${message.rmq.password}" host="${message.rmq.host}" port="${message.rmq.port}" /> 
+
+	<!-- 序列化 -->
+	<bean id="jsonMessageConverter"  class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+	<!--定义rabbit template用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate"  connection-factory="connectionFactory" 
+	    exchange="exchangeQueue" message-converter="jsonMessageConverter"/>
+		
+	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin connection-factory="connectionFactory" />
+
+		=============   配置q等消息   ==================
+	
+	<!--定义queue -->
+	<rabbit:queue name="queueForPoints" durable="true" auto-delete="false" exclusive="false" />
+	
+	
+
+	<!-- 定义direct exchange，绑定queueTest -->
+	<rabbit:direct-exchange name="exchangeQueue" durable="true" auto-delete="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueForPoints" key="queueForPtsKey"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+		============消息产生类
+
+	private AmqpTemplate amqpTemplate;
+
+	public void sendMessage(String key, Object message) {                ===========key为queueForPtsKey
+		logger.info("to send message:{}", message);
+		// 发送对象，默认序列化。如果序列化，必须convertAnd发送
+		try{
+			amqpTemplate.convertAndSend(key, message);
+		}catch(Exception e){
+			logger.error("MessageProducer 消息产生,提交到队列中去:{}"+e.getMessage());
+		}
+		
+	}
+
+
+
+===========
+
+
+yum -y install wget gcc zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel libffi-devel
+RabbitMq：
+
+ConnectionFactory（连接管理器）：应用程序与Rabbit之间建立连接的管理器，程序代码中使用；
+
+RoutingKey（路由键）：用于把生成者的数据分配到交换器上；
+
+Exchange（交换器）：用于接受、分配消息；
+
+BindingKey（绑定键）：用于把交换器的消息绑定到队列上；
+
+Queue（队列）：用于存储生产者的消息；
+
+Channel（信道）：消息推送使用的通道；
+
+消息持久化：
+
+Rabbit队列和交换器有一个不可告人的秘密，就是默认情况下重启服务器会导致消息丢失，那么怎么保证Rabbit在重启的时候不丢失呢？答案就是消息持久化。
+
+当你把消息发送到Rabbit服务器的时候，你需要选择你是否要进行持久化，但这并不能保证Rabbit能从崩溃中恢复，想要Rabbit消息能恢复必须满足3个条件：
+
+    投递消息的时候durable设置为true，消息持久化，代码：channel.queueDeclare(x, true, false, false, null)，参数2设置为true持久化；
+    设置投递模式deliveryMode设置为2（持久），代码：channel.basicPublish(x, x, MessageProperties.PERSISTENT_TEXT_PLAIN,x)，参数3设置为存储纯文本到磁盘；
+    消息已经到达持久化交换器上；
+    消息已经到达持久化的队列；
+
+持久化工作原理：
+
+Rabbit会将你的持久化消息写入磁盘上的持久化日志文件，等消息被消费之后，Rabbit会把这条消息标识为等待垃圾回收。
+
+持久化的缺点：
+
+消息持久化的优点显而易见，但缺点也很明显，那就是性能，因为要写入硬盘要比写入内存性能较低很多，从而降低了服务器的吞吐量，尽管使用SSD硬盘可以使事情得到缓解，但他仍然吸干了Rabbit的性能，当消息成千上万条要写入磁盘的时候，性能是很低的。
+
+所以使用者要根据自己的情况，选择适合自己的方式。
+

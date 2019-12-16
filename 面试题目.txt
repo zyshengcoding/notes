@@ -30,3 +30,39 @@
 ​前端短信登录，防止注入 接口里面做个注解，用了注解就拦截逻辑
 ​
 ​接口是如何防止暴露的。
+
+
+
+
+ 1.用一条SQL语句查出所有分数在60以下学生姓名及课程清单。  
+SELECT a.name,b.course
+FROM student a,course b
+WHERE a.id = b.student_id 
+AND b.course>60
+2.用一条SQL语句查出每一个学生的课程总数和课程成绩总分。  
+SELECT a.name,SUM(b.score),COUNT(*) total
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY b.student_id
+
+
+
+
+
+ 3.用一条SQL语句查出所有课程平均分在80分以上的学生姓名。  
+SELECT * FROM 
+(SELECT a.name,a.id,SUM(b.score),SUM(b.score)/COUNT(*) avge
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY a.id) table2
+WHERE table2.avge>80
+
+4.用一条SQL语句查出课程考试及格率（达到60分的学生数/总学生数）在70%以上的课程清单
+
+SELECT * FROM(
+SELECT a.name,a.id,SUM(b.score)/COUNT(*) avge,b.course
+FROM student a,course b
+WHERE a.id = b.student_id 
+GROUP BY b.course) tab
+WHERE tab.avge>70
+

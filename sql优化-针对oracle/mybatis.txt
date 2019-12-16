@@ -1,7 +1,0 @@
-﻿数据库多条件判断
-
-1.or: <if test="(storeCode != null and storeCode != '') or 
-(productListingFlag != null and productListingFlag != '') ">
-
-2.and: <if test="(storeCode != null and storeCode != '') and 
-(productListingFlag != null and productListingFlag != '') ">
