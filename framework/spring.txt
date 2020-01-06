@@ -1,4 +1,6 @@
-﻿spring-core  
+﻿通过@Qualifier（“bean的名字”）-->来进行绑定
+
+spring-core  
 Spring bean解析就在此方法
 1.org.springframework.context.support.AbstractApplicationContext#refresh
 
@@ -201,8 +203,13 @@ mysql默认隔离级别：RR 可重复读-----与spring的默认隔离级别一�
 
 Spring-AOP：
 
+Spring只支持方法级别的连接点 
+AspectJ和JBoss，除了方法切 点，它们还提供了字段和构造器接入点
+Spring缺少对字段连接点的 支持，无法让我们创建细粒度的通知，例如拦截对象字段的修改。而且它不
+支持构造器连接点，我们就无法在bean创建时应用通知。
 
-
+环绕通知：
+别忘记调用proceed()方法。如果不调这个方法的 话，那么你的通知实际上会阻塞对被通知方法的调用
 
 
 

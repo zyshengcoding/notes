@@ -1,0 +1,161 @@
+﻿Hadoop:（三大核心）
+HDFS:分布式文件存储系统
+MapReduce：一个分布式的离线并行计算框架
+Yarn：一个新的MapReduce框架,任务调度与集群资源整合
+
+HDFS：（用来存储）
+
+三个服务：
+1.namenode   metadata  元数据
+2.secondary namenode
+3.datanode
+1掌管3   2附属于1     
+
+
+写流程  client--->namenode(返回像哪个datanode，怎些写等信息)---->client---->write(datanode开始写，并且ack返回)---client关闭--->namenode完成
+client （操作文件系统的地方） 如 : hdfs dfs -ls/
+1.client  open 操作（打开分布式文件系统）
+2.create
+3.write
+4.ack
+5.client 端 close
+6.complete
+
+读流程    client--->namenode get block(返回像哪个datanode，怎些读等信息)---->client---->read(datanode)---client关闭
+1.client  open 操作
+
+
+yarn：（统一资源管理系统）
+为不同类型的应用程序提供统一的管理和调度
+
+服务组件
+client
+ResourceManager（管理资源）,Application Master(负责每一次在yarn内作业的运行)
+NodeManager(干活),Container（资源）
+
+
+=========================
+
+Hive：（一个数据仓库工具，利用sql来分析的工具）
+
+元数据：由于hive实际数据存在HDFS上面以文件的形式，不能进行读写操作，因此
+需要元数据对hdfs上的数据进行管理
+
+数据存储在HDFS或则HBase
+查询执行引擎：Spark  MapRedice
+
+内部表：多英语临时表，中间表
+外部表：用于数据源（需要额外加关键字external）
+删除外部表只删除元数据，不删除正真的数据内容   删除内部表都会删除
+
+sql语句：
+尽量避免join
+尽量避免使用子查询，in，not in 等
+永远小区驱动大表（小结果集驱动大结果集，小表靠左 select * from  小表,大表）
+
+
+1.select * from u2
+
+2.删表   drop table if exists 表名
+
+3.加载数据   load data local inpath '/home/oldata/u1'  into table u1 
+从hdfs加数据  hdfs dfs -put ./u1 /  （将u1放到根目录）
+
+
+4.查看表结构  desc u1;
+
+5.left join, left semi join, left outer join
+上述三者都是以左表为准，来匹配右表，右表匹配不上则用null来替代
+
+6.right join, right outer join   
+hive不支持  right semi join
+上述二者都是以右表为准，来匹配左表，左表匹配不上则用null来替代
+
+7.hive只支持on等值连接（and也支持），不支持非等值连接如：>,<,!=,<=,>=,<>
+
+8.group by 用法 
+select e.deptno,avg(e.sal) as avgs from emp e group by e.deptno having avgs >30    部门平均薪资大于30
+
+9.sort by  reducers局部排序，必须升序，后面加上asc， order by reducers全局排序
+distribute by在sort by前面      cluster by兼有distribute by与sort by的功能
+
+10.union（去重并不排序，根据子集默认排序）/union all(不去重，不排序，只是将二部分数据进行合并)   都是将多个结果集进行合并
+
+
+
+
+
+============
+
+java io   体现了装饰者设计模式（缓冲流）
+
+字节流,字符流：
+体现在读写内容（按什么形式保存就用不同的流来读取）
+
+字符：txt（存储文字）
+
+字节：rar,zip,png(压缩包和图片--->是按字节形式保存的)
+
+	RDD
+
+RDD：弹性分布式数据集 （得到的信息是一行一行的）
+
+RDD是只读的，无法改变RDD中的数据，只能在RDD基础上面创建新的RDD（就像字符创String a ="abc"，就无法改变了，只能通过Substring来截取创建新的字符串）
+
+RDD创建：从集合中创建，从外部存储创建，从其他RDD创建
+
+RDD转换：
+
+
+Driver：创建spark上下文的应用程序
+
+数据热点：导致数据倾斜，大量数据集中到一个分区里面
+
+
+
+
+
+===========================
+
+
+指令：
+
+yarn：
+yarn application -list               
+
+yarn application -kill + id
+
+
+1.hdfs路径下的表的操作：
+/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -ls /apps/test_init      查看/apps/test_init下面多少张表
+
+hadoop fs -put /home/mapr/test/zyshengtest/ITMLIST.ful /apps/test/zysheng/mapr/   新增
+
+hadoop fs -rm -r /apps/test/zysheng/return_dtl    删除
+
+2.sqlline操作表：
+2.1 sqlline
+2.2 !connect jdbc:drill:zk=node1,node2,node3:5181
+2.3 输入用户名和密码
+2.3编写查询语句
+	SELECT * FROM `dfs.default`.`./apps/test_init/itm`;    查看itm表
+	select distinct str_cd FROM `dfs.default`.`./apps/tpsales/tp_sales20` where txn_date = '2019-12-17';    带条件的查询
+	
+	
+3.查看topic的size
+
+maprcli stream topic info -path /carrefourTest-stream -topic MD-TBLHDR
+
+maprcli stream topic info -path carrefourTest-stream -topic carrefour-cmplus-staging
+
+
+
+sparksql：
+
+number转字符串 cast：    cast(Original_Price as string) as regularPrice
+
+字符串转number：          cast(numrc_val as decimal(20,5))
+
+字符串转日期 ：    to_date(itk.ITKSTOP)
+
+日期相关  date_format(date_add(to_date(itk.ITKSTOP),1), 'dd/MM/yyyy')
