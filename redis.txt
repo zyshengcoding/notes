@@ -1,4 +1,17 @@
-﻿1.代码实现：  引入jedis的jar包     不设置超时时间，默认永不超时
+﻿理论部分
+
+hash一般用来存储 用户等实体信息
+
+事务和持久化
+
+# redis-cli -p 6379   docker下面redis客户端操作指令开启
+
+
+
+
+
+
+1.代码实现：  引入jedis的jar包     不设置超时时间，默认永不超时
 
 	1.1 redisUtil.expire(para.getReqUUID(), 24*3600);   -----设置超时时间
 

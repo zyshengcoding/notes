@@ -1,7 +1,7 @@
 package com.ibm.controller;
 
 
-import com.ibm.datado.Department;
+import com.ibm.entity.Department;
 import com.ibm.service.MainService;
 import com.ibm.vo.Person;
 import com.ibm.vo.UserVo;

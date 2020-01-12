@@ -1,4 +1,9 @@
-﻿查找：
+﻿如果提示lsof,vi,vim等指令不存在
+通过 yum install lsof 进行安装
+
+
+
+查找：
 find -name 'catalina.out' | xargs grep --color -A 0 -B0 'CK-SAP-MP-01'
 
 A 0（after 表示过滤之后不符合条件的之后显示多少行） -B0 （before 表示过滤之前不符合条件的之后显示多少行）

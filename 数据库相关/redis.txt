@@ -1,0 +1,4 @@
+﻿redis底层存储
+
+string是三种，截图有
+hash是 ziplist 与 hashtable （ziplist 能升级到 hashtable，但是hashtable 不能降级到 ziplist）

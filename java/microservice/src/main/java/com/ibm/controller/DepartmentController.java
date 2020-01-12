@@ -1,6 +1,6 @@
 package com.ibm.controller;
 
-import com.ibm.datado.Department;
+import com.ibm.entity.Department;
 import com.ibm.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

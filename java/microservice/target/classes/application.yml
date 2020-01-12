@@ -12,8 +12,8 @@ spring:
   datasource:
     username: root
     password: 123456
-#    url: jdbc:mysql://192.168.0.150:3301/jdbc     #office
-    url: jdbc:mysql://192.168.1.9:3301/jdbc    #home
+    url: jdbc:mysql://172.20.10.7:3306/forbigdata     #office
+#    url: jdbc:mysql://192.168.1.9:3301/jdbc    #home
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
@@ -33,11 +33,23 @@ spring:
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
     #schema里面为建表语句，为list
+  redis:
+    database: 0
+    host: 172.20.10.7
+    port: 6377
+    password:
+    max-active: 200
+    max-wait: -1
+    max-idle: 10
+    min-idle: 0
+    timeout: 100
 #    schema:
 #      - classpath:employee.sql
 #      - classpath:department.sql
-logging:
-  level:
-    com.ibm.mapper: debug
+#      - classpath:user.sql
+#logging:
+#  level:
+#    com.ibm.mapper: error
+#
+#debug: true
 
-debug: true

@@ -1,7 +1,6 @@
 package com.ibm.mapper;
 
-import com.ibm.datado.Department;
-import com.ibm.datado.Employee;
+import com.ibm.entity.Department;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

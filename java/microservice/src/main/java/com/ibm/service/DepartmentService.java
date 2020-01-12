@@ -1,7 +1,6 @@
 package com.ibm.service;
 
-import com.ibm.datado.Department;
-import com.ibm.jdbc.MainJdbc;
+import com.ibm.entity.Department;
 import com.ibm.mapper.MianMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;

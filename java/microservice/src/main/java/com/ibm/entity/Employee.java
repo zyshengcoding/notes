@@ -1,4 +1,4 @@
-package com.ibm.datado;
+package com.ibm.entity;
 
 public class Employee {
 

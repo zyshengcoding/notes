@@ -1,7 +1,6 @@
 package com.ibm.service;
 
-import com.ibm.datado.Department;
-import com.ibm.datado.Employee;
+import com.ibm.entity.Department;
 import com.ibm.jdbc.MainJdbc;
 import com.ibm.mapper.MianMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class MainService {
