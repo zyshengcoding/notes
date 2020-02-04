@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -20,6 +22,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     @Override
@@ -36,11 +40,18 @@ public class UserServiceImpl implements UserService {
 
     @Async("taskExecutor")
     @Override
-    public void regisReq(User user) {
+    public void regisReq(User user, Map<String, String> map) {
+        String parimaryKey = "parimaryKey";
         boolean accquire = redisUtil.getLock(user.getUsername());
         if (true == accquire) {
             try {
+                Long increAge = redisTemplate.opsForValue().increment(parimaryKey,1);
+                long lage = increAge.longValue();
+                String sAge = String.valueOf(lage);
+                user.setAge(sAge);
+                map.put("age",user.getAge());
                 userMapper.addUser(user);
+                redisTemplate.opsForHash().putAll(user.getAge()+":"+user.getUsername(),map);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

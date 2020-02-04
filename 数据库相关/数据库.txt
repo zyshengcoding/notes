@@ -1,4 +1,9 @@
-﻿plsqldev：查看执行计划
+﻿一般的 MySQL，扛到每秒 2k 个请求就差不多了，如果每秒请求到 5k 的话，
+可能就直接把 MySQL 给打死了，导致系统崩溃，用户也就没法再使用系统了。
+
+幂等性，通俗点说，就一个数据，或者一个请求，给你重复来多次，你得确保对应的数据是不会改变的，不能出错。
+
+plsqldev：查看执行计划
 explain plan for  select * from pt_category 
 commit;
 select * from table(dbms_xplan.display)
