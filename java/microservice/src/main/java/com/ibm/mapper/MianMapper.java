@@ -12,7 +12,7 @@ import java.util.List;
 public interface MianMapper {
 
     @Select("select * from department")
-     List<Department> getDeptList();
+    List<Department> getDeptList();
 
     @Update("update department set departmentName = #{departmentName} where id = #{id}")
     void updateDept(Department department);

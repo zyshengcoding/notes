@@ -27,29 +27,27 @@ public class MainController {
 
     @ResponseBody
     @RequestMapping("/getString")
-    public String getString(){
+    public String getString() {
 
         System.out.println(userVo);
         System.out.println(person);
         return "Hello";
     }
 
-    /**@Cacheable  缓存方法
-     * testMapperCache如果是缓存标注的方法，那么debug断电都进不去，相当于里面的逻辑不会执行
-     *
-     *
-     *
+    /**
      * @return
+     * @Cacheable 缓存方法
+     * testMapperCache如果是缓存标注的方法，那么debug断电都进不去，相当于里面的逻辑不会执行
      */
     @ResponseBody
     @RequestMapping("/testCache")
-    public String testCache(){
+    public String testCache() {
         List<Department> departments = mainService.testMapperCache();
-        if (null==departments){
+        if (null == departments) {
             return "false";
-        }else{
-            for (Department dept: departments){
-                System.out.println(dept.getId()+">> : <<" +dept.getDepartmentName());
+        } else {
+            for (Department dept : departments) {
+                System.out.println(dept.getId() + ">> : <<" + dept.getDepartmentName());
             }
             return "Hello";
         }

@@ -1,0 +1,27 @@
+server:
+  port: 9000
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+
+spring:
+  application:
+    name: api-gateway
+
+zuul:
+  routes:
+    ##自定义路由映射
+    order-service: /api/od/**
+    product-service: /api/pt/**
+    ##配置不对外提供接口的 匹配规则
+    # *表示匹配一个或则多个26个单词
+    # **表示匹配一个或多个单词以及特殊字符
+  ignored-patterns: /*-service/**
+  ##忽视服务对外提供接口
+#  ignored-services: product-service
+    ##处理像下游系统传递参数为null的问题
+  sensitive-headers:

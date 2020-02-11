@@ -1,0 +1,58 @@
+server:
+  port: 8763
+
+
+#指定注册中心地址
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+#服务的名称
+spring:
+  application:
+    name: order-service
+  redis:
+    database: 1
+    host: 192.168.1.10
+    port: 6377
+    timeout: 8000
+
+product-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+#hystrix超时时间禁用  与修改超时时间
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          enabled: false
+
+#设置超时时间
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+#暴露全部的监控信息
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -74,6 +74,7 @@ public class MainService {
 
     /**
      * 下查看key是否存在，不存在调用方法，存在不调用方法
+     *
      * @return
      */
     @Cacheable(cacheNames = {"dept"})
@@ -89,22 +90,23 @@ public class MainService {
 
     @Cacheable(cacheNames = {"dept"})
     public Department getdeptById(String id) {
-       return mianMapper.getdept(id);
+        return mianMapper.getdept(id);
     }
 
     /**
      * 即调用方法，又更新缓存
      * 先调用方法
+     *
      * @return
      */
     @CachePut
-    public void updatedept(Department department){
+    public void updatedept(Department department) {
         mianMapper.updateDept(department);
 
     }
 
     @CachePut
-    public void delDept(String id){
+    public void delDept(String id) {
         mianMapper.delDept(id);
 
     }

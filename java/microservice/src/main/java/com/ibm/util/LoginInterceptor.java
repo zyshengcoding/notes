@@ -22,11 +22,9 @@ public class LoginInterceptor implements HandlerInterceptor {
           System.out.println(cookies[i].getValue()+" cookieValue ");
           System.out.println(cookies[i].getVersion()+" cookieVersion ");
       }*/
-        System.out.println("requestURI{} "+requestURI+" session{} "+session);
+        System.out.println("requestURI{} " + requestURI + " session{} " + session);
         return true;
     }
-
-
 
 
     @Override

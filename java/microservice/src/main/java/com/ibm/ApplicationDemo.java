@@ -59,7 +59,7 @@ public class ApplicationDemo {
             user.setUsername("testUser" + String.valueOf((int) (Math.random() * 10)));
             map.put("userName", user.getUsername());
             map.put("pasword", user.getPassword());
-            userService.regisReq(user,map);
+            userService.regisReq(user, map);
         }
     }
 
@@ -73,7 +73,7 @@ public class ApplicationDemo {
             user.setUsername("testUser" + String.valueOf((int) (Math.random() * 10)));
             map.put("userName", user.getUsername());
             map.put("pasword", user.getPassword());
-            userService.regisReq(user,map);
+            userService.regisReq(user, map);
         }
     }
 }

@@ -10,12 +10,12 @@ import java.util.Arrays;
 public class MyCacheConf {
 
 
-    public KeyGenerator getKey(){
-       return new KeyGenerator(){
+    public KeyGenerator getKey() {
+        return new KeyGenerator() {
 
             @Override
             public Object generate(Object target, Method method, Object... params) {
-                return method.getName()+'['+ Arrays.asList(params)+']';
+                return method.getName() + '[' + Arrays.asList(params) + ']';
             }
         };
     }

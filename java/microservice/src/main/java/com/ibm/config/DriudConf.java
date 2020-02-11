@@ -16,6 +16,7 @@ public class DriudConf {
 
     /**
      * 配置基本属性
+     *
      * @return
      */
     @ConfigurationProperties(prefix = "spring.datasource")

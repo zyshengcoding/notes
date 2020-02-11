@@ -16,13 +16,13 @@ import org.springframework.web.servlet.config.annotation.*;
 import java.util.List;
 
 @Configuration
-public  class LoginConf  {
+public class LoginConf {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
 
     @Bean
-    public WebMvcConfigurer webMvcConfigurer(){
+    public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
 
 
@@ -30,9 +30,6 @@ public  class LoginConf  {
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/admin");
             }
-
-
-
 
 
             @Override
@@ -59,7 +56,6 @@ public  class LoginConf  {
             public void addFormatters(FormatterRegistry registry) {
 
             }
-
 
 
             @Override

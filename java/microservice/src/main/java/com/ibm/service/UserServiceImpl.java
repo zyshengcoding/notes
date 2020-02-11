@@ -45,13 +45,13 @@ public class UserServiceImpl implements UserService {
         boolean accquire = redisUtil.getLock(user.getUsername());
         if (true == accquire) {
             try {
-                Long increAge = redisTemplate.opsForValue().increment(parimaryKey,1);
+                Long increAge = redisTemplate.opsForValue().increment(parimaryKey, 1);
                 long lage = increAge.longValue();
                 String sAge = String.valueOf(lage);
                 user.setAge(sAge);
-                map.put("age",user.getAge());
+                map.put("age", user.getAge());
                 userMapper.addUser(user);
-                redisTemplate.opsForHash().putAll(user.getAge()+":"+user.getUsername(),map);
+                redisTemplate.opsForHash().putAll(user.getAge() + ":" + user.getUsername(), map);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
