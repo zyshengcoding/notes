@@ -1,0 +1,23 @@
+gitlab  代码管理工具
+工作流程
+1.创建并克隆项目
+2.创建项目某Feature分支
+3.编写代码并提交分支
+4.push推送到远端分支
+5.合并分支
+6.leader完成合并的请求
+
+git add .  添加所有文件到本地仓库
+git commit  上传文件到本地master分支
+
+git -c http.sslVerify=false clone https://.....远端仓库地址
+git checkout -b dev      创建并切换到dev分支
+git push origin dev      在远端创建并且提交代码到dev分支
+merge                    将dev的代码merge到master分支
+
+=======================  
+Ansible 部署工具
+
+Chef:Ruby语言编写,需要有ruby经验,C/S架构
+Saltstack:Python语言编写,yaml脚本编写规范,适合大规模集群部署,C/S架构
+Ansible  开源免费

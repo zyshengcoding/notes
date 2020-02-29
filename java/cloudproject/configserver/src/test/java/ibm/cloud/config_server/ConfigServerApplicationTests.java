@@ -1,11 +1,10 @@
-package ibm.cloud.provider_server;
+package ibm.cloud.config_server;
 
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProviderServerApplicationTests {
+class ConfigServerApplicationTests {
 
     @Test
     void contextLoads() {

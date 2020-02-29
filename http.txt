@@ -79,3 +79,7 @@ console.log(document.cookie);
  11.3:经过HTTPS安全加密的请求（有人也经过测试发现，ie其实在头部加入Cache-Control：max-age信息，firefox在头部加入Cache-Control:Public之后，能够对HTTPS的资源进行缓存，参考《HTTPS的七个误解》）
  11.4:POST请求无法被缓存
  11.5:HTTP响应头中不包含Last-Modified/Etag，也不包含Cache-Control/Expires的请求无法被缓存
+
+
+12.
+
