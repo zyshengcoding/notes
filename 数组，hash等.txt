@@ -62,3 +62,20 @@
      
 
 	创建位置： 局部变量是创建在栈内存中的；
+	
+========== hashtable =========================================
+
+hashtable： 
+1.通过key的hash值算出在entry填充在数组哪里。
+2. if (e.hash == hash && ((k = e.key) == key || key.equals(k)))  来检测链表中是够拥有key相同的值，如果有就进行替换。没有就插入链表
+
+      if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+    }
+
+
+
+	
