@@ -1,0 +1,7 @@
+windows下在C:\Windows\System32\drivers\etc\hosts路径下修改hosts文件，右键选择记事本打开。
+修改之前要更改一下文件权限，右键属性-安全-编辑，添加写入权限。
+将这句话加到文件最后，保存即可。
+
+199.232.28.133 raw.githubusercontent.com 
+
+如果ip换了，登录 https://www.ipaddress.com/ 网站，搜索 raw.githubusercontent.com，替换当前的ip即可。
