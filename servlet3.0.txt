@@ -96,26 +96,3 @@ startAsync（）方法----获取异步上下文对象  request.startAsync(),
 	通过srd.addmapping（“/some”）增加访问的路径url-pattern
 
 用过serveltContextListener来监听应用的启动情况
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
